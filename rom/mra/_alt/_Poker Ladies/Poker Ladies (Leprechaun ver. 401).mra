@@ -1,0 +1,73 @@
+<!--          FPGA compatible core for Leprechaun arcade hardware by Jotego
+
+              This core is available for hardware compatible with MiST and MiSTer
+              Other FPGA systems may be supported by the time you read this.
+              This work is not mantained by the MiSTer project. Please contact the
+              core author for issues and updates.
+
+              (c) Jose Tejada, 2022. Please support the author
+              Patreon: https://patreon.com/topapate
+              Paypal:  https://paypal.me/topapate
+
+              The author does not endorse or participate in illegal distribution
+              of copyrighted material. This work can be used with legally
+              obtained ROM dumps or with compatible homebrew software.
+
+              This file license is GNU GPLv2.
+              You can read the whole license file in
+              https://opensource.org/licenses/gpl-2.0.php
+
+-->
+
+<misterromdescription>
+    <about author="jotego" webpage="https://patreon.com/topapate" source="https://github.com/jotego" twitter="@topapate"/>
+    <name>Poker Ladies (Leprechaun ver. 401)</name>
+    <setname>pkladiesla</setname>
+    <rbf>jtpang</rbf>
+    <mameversion>0237</mameversion>
+    <year>1989</year>
+    <manufacturer>Leprechaun</manufacturer>
+    <players>1</players>
+    <joystick/>
+    <rotation>horizontal</rotation>
+    <region>World</region>
+    <mraauthor>jotego</mraauthor>
+    <rom index="0" zip="pkladiesla.zip|pkladies.zip" md5="None">
+        <!-- maincpu - starts at 0x0 -->
+        <part name="pk05.14f" crc="fa18e16a"/>
+        <part name="pk06.15f" crc="a2fb7646"/>
+        <part repeat="0x68000"> FF</part>
+        <!-- oki - starts at 0x80000 -->
+        <part name="pk01.2d" crc="07e0f531"/>
+        <part name="pk02.3d" crc="18398bf6"/>
+        <part repeat="0x40000"> FF</part>
+        <!-- gfx1 - starts at 0x100000 -->
+        <interleave output="16">
+            <part name="pk0-001-t18.8h" crc="1ead5d9b" map="01"/>
+            <part name="pk0-003-t20.8j" crc="339ab4e6" map="10"/>
+        </interleave>
+        <interleave output="16">
+            <part name="pk0-002-t19.9h" crc="1cf02586" map="01"/>
+            <part name="pk0-004-t21.9j" crc="09ccb442" map="10"/>
+        </interleave>
+        <!-- gfx2 - starts at 0x300000 -->
+        <interleave output="16">
+            <part name="pk16.2j" crc="31ce33cd" map="01"/>
+            <part name="pk17.3j" crc="ad7e055f" map="10"/>
+        </interleave>
+        <!-- eeprom - starts at 0x340000 -->
+        <part name="93c46.14a" crc="6856c4aa"/>
+        <!-- pals - starts at 0x340080 -->
+        <part name="pal16l8cn.poker.10g" crc="8e592f22"/>
+        <part repeat="0xE9"> FF</part>
+        <part name="epl16p8bp.pl-c4.5j" crc="6cae00f7"/>
+        <!-- Total 0x340397 bytes - 3328 kBytes -->
+    </rom>
+    <rom index="17" zip="jtbeta.zip" md5="None">
+        <part name="beta.bin"/>
+    </rom>
+    <rom index="1">
+        <part>00</part>
+    </rom>
+    <buttons names="button 1,button 2,Start,Coin,Core credits" default="Y,X,Start,Select,-" count="2"/>
+</misterromdescription>

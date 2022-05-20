@@ -1,0 +1,37 @@
+[global]
+mraauthor=["jotego"]
+
+[features]
+beta = true
+# debug = true
+
+[parse]
+sourcefile="mitchell.cpp"
+skip = { bootlegs=true, setnames = [
+    "mstworld", "mstworld2",
+    "spangbl","spangbl2",
+    "pangba","pangbb","pangbc"
+] }
+
+[buttons]
+core=$JTFRAME_BUTTONS
+
+[rbf]
+name="jtpang"
+
+[dipsw]
+bitcnt = 16
+delete = [ "Unused", "Unknown" ]
+
+[ROM]
+regions = [
+    { name="maincpu",  No_offset=true   },
+    { name="oki", No_offset=true, start=$PCM_START },
+
+    { name="gfx1", start=$CHAR_START, width=16, No_offset=true },
+    { name="gfx2", start=$OBJ_START, width=16, No_offset=true, sort_even=true }
+]
+
+order = [
+    "maincpu", "oki", "gfx1", "gfx2"
+]
