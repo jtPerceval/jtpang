@@ -33,6 +33,10 @@
     <region>World</region>
     <mraauthor>jotego</mraauthor>
     <rom index="0" zip="qsangoku.zip" md5="None">
+        <part>
+            00 00 00 00 00 00 00 00
+            00 00 00 00 00 00 00 00
+        </part>
         <!-- maincpu - starts at 0x0 -->
         <part name="q4-05c.rom" crc="e1d010b4"/>
         <part name="q4-06.rom" crc="a0301849"/>

@@ -33,6 +33,10 @@
     <region>World</region>
     <mraauthor>jotego</mraauthor>
     <rom index="0" zip="cworld.zip" md5="None">
+        <part>
+            00 00 00 00 00 00 00 00
+            00 00 00 00 00 00 00 00
+        </part>
         <!-- maincpu - starts at 0x0 -->
         <part name="cw05.bin" crc="d3c1723d"/>
         <part name="cw06.bin" crc="d71ed4a3"/>

@@ -33,6 +33,10 @@
     <region>World</region>
     <mraauthor>jotego</mraauthor>
     <rom index="0" zip="pang.zip" md5="None">
+        <part>
+            01 23 45 67 76 54 32 10
+            65 48 24 00 00 00 00 00
+        </part>
         <!-- maincpu - starts at 0x0 -->
         <part name="pwe_06.11h" crc="68be52cd"/>
         <part name="pwe_07.13h" crc="4a2e70f6"/>

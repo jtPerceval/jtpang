@@ -33,6 +33,10 @@
     <region>World</region>
     <mraauthor>jotego</mraauthor>
     <rom index="0" zip="hatena.zip" md5="None">
+        <part>
+            00 00 00 00 00 00 00 00
+            00 00 00 00 00 00 00 00
+        </part>
         <!-- maincpu - starts at 0x0 -->
         <part name="q2-05.rom" crc="66c9e1da"/>
         <part name="q2-06.rom" crc="5fc39916"/>

@@ -33,6 +33,10 @@
     <region>World</region>
     <mraauthor>jotego</mraauthor>
     <rom index="0" zip="spang.zip" md5="None">
+        <part>
+            00 00 00 00 00 00 00 00
+            00 00 00 00 00 00 00 00
+        </part>
         <!-- maincpu - starts at 0x0 -->
         <part name="spe_06.11h" crc="1af106fb"/>
         <part name="spe_07.13h" crc="208b5f54"/>

@@ -33,6 +33,10 @@
     <region>World</region>
     <mraauthor>jotego</mraauthor>
     <rom index="0" zip="mgakuen2.zip" md5="None">
+        <part>
+            00 00 00 00 00 00 00 00
+            00 00 00 00 00 00 00 00
+        </part>
         <!-- maincpu - starts at 0x0 -->
         <part name="mg2-xf.1j" crc="c8165d2d"/>
         <part name="mg2-y.1l" crc="75bbcc14"/>

@@ -60,6 +60,8 @@ module jtpang_sdram(
     // ROM LOAD
     input            downloading,
     output           dwnld_busy,
+    output           kabuki_we,
+    output           kabuki_en,
 
     input    [24:0]  ioctl_addr,
     input    [ 7:0]  ioctl_dout,
@@ -82,11 +84,18 @@ localparam [24:0] BA1_START   = `PCM_START,
 /* verilator lint_on WIDTH */
 
 wire [21:0] pre_addr;
-wire        is_char, is_obj, prom_we;
+wire        is_char, is_obj, prom_we, header;
+reg         kabuki_en;
 
 assign dwnld_busy = downloading;
 assign is_char   = prog_ba==2;
 assign is_obj    = prog_ba==3 && !prom_we;
+assign kabuki_we = ioctl_wr & header;
+
+always @(posedge clk) begin
+    if( kabuki_we && ioctl_addr[3:0]==0 )
+        kabuki_en <= ioctl_dout!=0;
+end
 
 always @* begin
     prog_addr = pre_addr;
@@ -98,6 +107,7 @@ always @* begin
 end
 
 jtframe_dwnld #(
+    .HEADER    ( 16        ),
     .BA1_START ( BA1_START ), // PCM sound
     .BA2_START ( BA2_START ), // char
     .BA3_START ( BA3_START ), // obj
@@ -115,7 +125,7 @@ jtframe_dwnld #(
     .prog_rd      ( prog_rd        ),
     .prog_ba      ( prog_ba        ),
     .prom_we      ( prom_we        ),
-    .header       (                ),
+    .header       ( header         ),
     .sdram_ack    ( prog_ack       )
 );
 /* verilator tracing_off */

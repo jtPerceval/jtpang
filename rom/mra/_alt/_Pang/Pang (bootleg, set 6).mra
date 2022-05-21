@@ -33,6 +33,10 @@
     <region>World</region>
     <mraauthor>jotego</mraauthor>
     <rom index="0" zip="pangbp.zip|pang.zip" md5="None">
+        <part>
+            00 00 00 00 00 00 00 00
+            00 00 00 00 00 00 00 00
+        </part>
         <!-- Skipping region maincpu because there is no dump known -->
         <part repeat="0x80000"> FF</part>
         <!-- oki - starts at 0x80000 -->

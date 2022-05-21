@@ -19,6 +19,12 @@ core=$JTFRAME_BUTTONS
 [rbf]
 name="jtpang"
 
+[header]
+len=16
+data = [
+    { machine="pang", Pointer=0, data="01 23 45 67 76 54 32 10 65 48 24" }
+]
+
 [dipsw]
 bitcnt = 16
 delete = [ "Unused", "Unknown" ]
