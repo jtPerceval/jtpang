@@ -27,7 +27,7 @@ module jtpang_sdram(
     output           main_ok,
 
     // PCM ROM
-    input     [15:0] pcm_addr,
+    input     [17:0] pcm_addr,
     input            pcm_cs,
     output    [ 7:0] pcm_data,
     output           pcm_ok,

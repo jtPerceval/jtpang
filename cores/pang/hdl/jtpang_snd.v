@@ -19,8 +19,8 @@
 module jtpang_snd(
     input              clk,
     input              rst,
-    input              cpu_cen,
-    input              fm_cen,
+    input              fm_cen,  // 4 MHz
+    input              pcm_cen, // 1 MHz
 
     // CPU interface
     input        [7:0] cpu_dout,
@@ -32,6 +32,10 @@ module jtpang_snd(
 
     output       [7:0] pcm_dout,
     input              pcm_cs,
+
+    // OSD control - not implemented yet
+    input              enable_psg,
+    input              enable_fm,
 
     // ROM interface
     output      [17:0] rom_addr,
@@ -74,7 +78,6 @@ jt6295 u_pcm (
     .sample  (          )
 );
 
-
 jtframe_mixer u_mixer(
     .rst  ( rst         ),
     .clk  ( clk         ),
@@ -90,6 +93,5 @@ jtframe_mixer u_mixer(
     .mixed( snd         ),
     .peak ( peak        )
 );
-
 
 endmodule

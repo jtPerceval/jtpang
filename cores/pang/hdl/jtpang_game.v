@@ -23,11 +23,11 @@ module jtpang_game(
     input           clk24,
     output          pxl2_cen,   // 12   MHz
     output          pxl_cen,    //  6   MHz
-    output   [7:0]  red,
-    output   [7:0]  green,
-    output   [7:0]  blue,
-    output          LHBL_dly,
-    output          LVBL_dly,
+    output   [3:0]  red,
+    output   [3:0]  green,
+    output   [3:0]  blue,
+    output          LHBL,
+    output          LVBL,
     output          HS,
     output          VS,
     // cabinet I/O
@@ -86,5 +86,58 @@ module jtpang_game(
     input   [7:0]   debug_bus,
     output  [7:0]   debug_view
 );
+
+wire [3:0] n;
+wire [3:0] m;
+wire [3:0] cen24;
+wire       pcm_cen, fm_cen, cpu_cen;
+
+assign { fm_cen, cpu_cen } = cen[1:0];
+assign pcm_cen = cen[3];
+
+// CPU and sound use the 24 MHz clock
+jtframe_frac_cen #(.W(4), .WC(4)) u_cen24(
+    .clk  ( clk24  ),
+    .n    ( 4'd1   ),
+    .m    ( 4'd3   ),
+    .cen  ( cen24  ),
+    .cenb (        )
+);
+
+// CPU bus
+wire [7 :0] cpu_dout, pcm_dout, fm_dout;
+wire        fm_cs, pcm_cem, // pcm_cs reserved for SDRAM
+            wr_n;
+// SDRAM
+wire [17:0] pcm_addr;
+wire [ 7:0] pcm_data;
+wire        pcm_ok;
+
+jtpang_snd u_snd (
+    .rst        ( rst24         ),
+    .clk        ( clk24         ),
+    .fm_cen     ( fm_cen        ),
+    .pcm_cen    ( pcm_cen       ),
+    .cpu_dout   ( cpu_dout      ),
+    .wr_n       ( wr_n          ),
+    .a0         ( cpu_addr[0]   ),
+    .fm_dout    ( fm_dout       ),
+    .fm_cs      ( fm_cs         ),
+    .pcm_dout   ( pcm_dout      ),
+    .pcm_cs     ( pcm_ce        ),
+
+    .enable_fm  ( enable_fm     ),
+    .enable_psg ( enable_psg    ),
+
+    .rom_addr   ( pcm_addr      ),
+    .rom_data   ( pcm_data      ),
+    .rom_ok     ( pcm_ok        ),
+
+    .peak       ( game_led      ),
+    .sample     ( sample        ),
+    .snd        ( snd           )
+);
+
+
 
 endmodule
