@@ -34,6 +34,7 @@ module jtpang_main(
     // Object
     output  reg        attr_cs,
     output  reg        vram_cs,
+    output  reg        vram_msb,
     output  reg        pal_cs,
     input   [7:0]      attr_dout,
     input   [7:0]      pal_dout,
@@ -68,7 +69,7 @@ reg  [ 7:0] cpu_din;
 wire        nvram_we, kabuki_we;
 wire        m1_n, rd_n, wr_n, mreq_n, rfsh_n;
 reg         ram_cs, rom_cs, cab_cs,
-            fm_cs, oki_cs,
+            fm_cs, oki_cs, vbank_cs,
             oki_bank, pal_bank, obj_dma,
             eeprom_cs, eeprom_clk, eeprom_din;
 wire        eeprom_dout;
@@ -95,6 +96,7 @@ always @* begin
     bank_cs  = !iorq_n && A[4:0]==2 && !wr_n;
     cab_cs = !iorq_n && A[4:0]<3  && !rd_n;
     obj_dma  = !iorq_n && A[4:0]==6;
+    vbank_cs = !iorq_n && A[4:0]==7 && !wr_n;
     fm_cs    = !iorq_n && A[4:1]==1;
     oki_cs   = !iorq_n && A[4:0]==5;
 end
@@ -106,11 +108,13 @@ always @(posedge clk, posedge rst) begin
         char_en   <= 1;
         obj_en    <= 1;
         video_enb <= 0;
+        vram_msb  <= 0;
         eeprom_cs <= 0;
         eeprom_clk<= 0;
         eeprom_din<= 0;
     end else begin
         if( bank_cs ) bank <= cpu_dout[3:0];
+        if( vbank_cs) vram_msb <= cpu_dout[0];
         if( misc_cs ) begin
             // chip 11D takes bits 0,1,2,5
             // chip 12D takes bits 3,4,6,7

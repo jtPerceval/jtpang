@@ -43,7 +43,7 @@ module jtpang_video(
     input    [3:0]  gfx_en
 );
 
-wire [7:0] obj_pxl;
+wire [ 7:0] obj_pxl;
 wire [10:0] ch_pxl;
 
 
@@ -79,6 +79,5 @@ jtpang_colmix i_jtpang_colmix (
     .green   (green   ),
     .blue    (blue    )
 );
-
 
 endmodule

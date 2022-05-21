@@ -48,18 +48,18 @@
         <!-- gfx1 - starts at 0x100000 -->
         <interleave output="16">
             <part name="q2-08.rom" crc="6c80da3c" map="01"/>
-            <part name="q2-09.rom" crc="abe3e15c" map="10"/>
-        </interleave>
-        <interleave output="16">
-            <part name="q2-10.rom" crc="6963450d" map="01"/>
-            <part name="q2-11.rom" crc="1e319fa2" map="10"/>
+            <part name="q2-10.rom" crc="6963450d" map="10"/>
         </interleave>
         <interleave output="16">
             <part name="q2-18.rom" crc="be6ee0c9" map="01"/>
-            <part name="q2-19.rom" crc="70300445" map="10"/>
+            <part name="q2-20.rom" crc="21a6ff42" map="10"/>
         </interleave>
         <interleave output="16">
-            <part name="q2-20.rom" crc="21a6ff42" map="01"/>
+            <part name="q2-09.rom" crc="abe3e15c" map="01"/>
+            <part name="q2-11.rom" crc="1e319fa2" map="10"/>
+        </interleave>
+        <interleave output="16">
+            <part name="q2-19.rom" crc="70300445" map="01"/>
             <part name="q2-21.rom" crc="076280c9" map="10"/>
         </interleave>
         <part repeat="0x100000"> FF</part>

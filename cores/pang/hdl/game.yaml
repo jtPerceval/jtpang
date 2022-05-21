@@ -5,7 +5,7 @@ game:
       - jtpang_main.v
       - jtpang_video.v
       - jtpang_colmix.v
-      - jtpang_scr.v
+      - jtpang_char.v
       - jtpang_sdram.v
       - jtpang_obj.v
       - jtpang_snd.v

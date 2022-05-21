@@ -48,18 +48,18 @@
         <!-- gfx1 - starts at 0x100000 -->
         <interleave output="16">
             <part name="cw08.bin" crc="6c80da3c" map="01"/>
-            <part name="cw09.bin" crc="7607da71" map="10"/>
-        </interleave>
-        <interleave output="16">
-            <part name="cw10.bin" crc="6f0e639f" map="01"/>
-            <part name="cw11.bin" crc="130bd7c0" map="10"/>
+            <part name="cw10.bin" crc="6f0e639f" map="10"/>
         </interleave>
         <interleave output="16">
             <part name="cw18.bin" crc="be6ee0c9" map="01"/>
-            <part name="cw19.bin" crc="51fc5532" map="10"/>
+            <part name="cw20.bin" crc="58381d58" map="10"/>
         </interleave>
         <interleave output="16">
-            <part name="cw20.bin" crc="58381d58" map="01"/>
+            <part name="cw09.bin" crc="7607da71" map="01"/>
+            <part name="cw11.bin" crc="130bd7c0" map="10"/>
+        </interleave>
+        <interleave output="16">
+            <part name="cw19.bin" crc="51fc5532" map="01"/>
             <part name="cw21.bin" crc="910cc753" map="10"/>
         </interleave>
         <part repeat="0x100000"> FF</part>

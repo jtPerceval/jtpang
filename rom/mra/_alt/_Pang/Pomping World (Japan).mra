@@ -47,10 +47,10 @@
         <!-- gfx1 - starts at 0x100000 -->
         <interleave output="16">
             <part name="pw_02.1e" crc="4b5992e4" map="01"/>
-            <part name="pw_03.2e" crc="79a8ed08" map="10"/>
+            <part name="pwj_04.1g" crc="01e49081" map="10"/>
         </interleave>
         <interleave output="16">
-            <part name="pwj_04.1g" crc="01e49081" map="01"/>
+            <part name="pw_03.2e" crc="79a8ed08" map="01"/>
             <part name="pw_05.2g" crc="2fb3db6c" map="10"/>
         </interleave>
         <part repeat="0x180000"> FF</part>

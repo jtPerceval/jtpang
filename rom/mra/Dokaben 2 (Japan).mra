@@ -48,10 +48,10 @@
         <!-- gfx1 - starts at 0x100000 -->
         <interleave output="16">
             <part name="d2_02.1e" crc="5dd7b941" map="01"/>
-            <part name="d2_03.2e" crc="b615e696" map="10"/>
+            <part name="d2_04.1g" crc="56b35605" map="10"/>
         </interleave>
         <interleave output="16">
-            <part name="d2_04.1g" crc="56b35605" map="01"/>
+            <part name="d2_03.2e" crc="b615e696" map="01"/>
             <part name="d2_05.2g" crc="ce98ff74" map="10"/>
         </interleave>
         <part repeat="0x180000"> FF</part>

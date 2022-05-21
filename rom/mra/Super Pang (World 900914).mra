@@ -48,10 +48,10 @@
         <!-- gfx1 - starts at 0x100000 -->
         <interleave output="16">
             <part name="spe_02.1e" crc="63c9dfd2" map="01"/>
-            <part name="spj_03.3e" crc="3ae28bc1" map="10"/>
+            <part name="spe_04.1g" crc="9d7b225b" map="10"/>
         </interleave>
         <interleave output="16">
-            <part name="spe_04.1g" crc="9d7b225b" map="01"/>
+            <part name="spj_03.3e" crc="3ae28bc1" map="01"/>
             <part name="spj_05.2g" crc="4a060884" map="10"/>
         </interleave>
         <part repeat="0x180000"> FF</part>

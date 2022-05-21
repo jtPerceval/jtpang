@@ -46,10 +46,10 @@
         <!-- gfx1 - starts at 0x100000 -->
         <interleave output="16">
             <part name="mg3-a.3k" crc="420f1de7" map="01"/>
-            <part name="mg3-b.4k" crc="d8de13fa" map="10"/>
+            <part name="mg3-c.6k" crc="fbeb66e8" map="10"/>
         </interleave>
         <interleave output="16">
-            <part name="mg3-c.6k" crc="fbeb66e8" map="01"/>
+            <part name="mg3-b.4k" crc="d8de13fa" map="01"/>
             <part name="mg3-d.7k" crc="8f6bd831" map="10"/>
         </interleave>
         <!-- gfx2 - starts at 0x300000 -->

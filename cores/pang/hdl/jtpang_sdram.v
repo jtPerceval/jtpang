@@ -100,8 +100,6 @@ end
 always @* begin
     prog_addr = pre_addr;
     // moves the H address bit to the LSBs
-//    if( is_char )
-//        prog_addr[3:0] = { pre_addr[2:0], pre_addr[3] };
 //    if( is_obj )
 //        prog_addr[5:0] = { pre_addr[3:0], pre_addr[5:4] };
 end

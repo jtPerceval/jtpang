@@ -48,10 +48,10 @@
         <!-- gfx1 - starts at 0x100000 -->
         <interleave output="16">
             <part name="9.10o" crc="3a5883f5" map="01"/>
-            <part name="10.14o" crc="79a8ed08" map="10"/>
+            <part name="11.17j" crc="166a16ae" map="10"/>
         </interleave>
         <interleave output="16">
-            <part name="11.17j" crc="166a16ae" map="01"/>
+            <part name="10.14o" crc="79a8ed08" map="01"/>
             <part name="12.20j" crc="2fb3db6c" map="10"/>
         </interleave>
         <part repeat="0x180000"> FF</part>

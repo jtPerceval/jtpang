@@ -47,34 +47,34 @@
         <!-- gfx1 - starts at 0x100000 -->
         <interleave output="16">
             <part name="20.ic97" crc="ea72f6b5" map="01"/>
-            <part name="14.ic96" crc="d6fe4f36" map="10"/>
-        </interleave>
-        <interleave output="16">
-            <part name="10.ic95" crc="a2eff7a9" map="01"/>
-            <part name="6.ic110" crc="0be240fc" map="10"/>
+            <part name="10.ic95" crc="a2eff7a9" map="10"/>
         </interleave>
         <interleave output="16">
             <part name="21.ic98" crc="45bb438c" map="01"/>
-            <part name="15.ic99" crc="afb0fa4a" map="10"/>
-        </interleave>
-        <interleave output="16">
-            <part name="11.ic100" crc="5d87135d" map="01"/>
-            <part name="7.ic101" crc="ee822998" map="10"/>
+            <part name="11.ic100" crc="5d87135d" map="10"/>
         </interleave>
         <interleave output="16">
             <part name="18.ic105" crc="e088b5e2" map="01"/>
-            <part name="12.ic104" crc="5339daa7" map="10"/>
-        </interleave>
-        <interleave output="16">
-            <part name="8.ic103" crc="fa117809" map="01"/>
-            <part name="4.ic102" crc="09ba3171" map="10"/>
+            <part name="8.ic103" crc="fa117809" map="10"/>
         </interleave>
         <interleave output="16">
             <part name="19.ic106" crc="48540300" map="01"/>
-            <part name="13.ic107" crc="5bcf710e" map="10"/>
+            <part name="9.ic108" crc="edf4c0f4" map="10"/>
         </interleave>
         <interleave output="16">
-            <part name="9.ic108" crc="edf4c0f4" map="01"/>
+            <part name="14.ic96" crc="d6fe4f36" map="01"/>
+            <part name="6.ic110" crc="0be240fc" map="10"/>
+        </interleave>
+        <interleave output="16">
+            <part name="15.ic99" crc="afb0fa4a" map="01"/>
+            <part name="7.ic101" crc="ee822998" map="10"/>
+        </interleave>
+        <interleave output="16">
+            <part name="12.ic104" crc="5339daa7" map="01"/>
+            <part name="4.ic102" crc="09ba3171" map="10"/>
+        </interleave>
+        <interleave output="16">
+            <part name="13.ic107" crc="5bcf710e" map="01"/>
             <part name="5.ic109" crc="93422182" map="10"/>
         </interleave>
         <!-- gfx2 - starts at 0x300000 -->
