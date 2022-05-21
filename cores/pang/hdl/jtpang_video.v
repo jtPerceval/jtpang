@@ -56,6 +56,40 @@ jtframe_frac_cen #(.W(2), .WC(4)) u_cen48(
     .cenb (        )
 );
 
+
+    wire [8:0] h;
+    wire [8:0] hf;
+    wire [8:0] vf;
+    wire hs;
+    wire flip;
+    wire vram_msb;
+    wire vram_cs;
+    wire [7:0] vram_dout;
+    wire [17:0] rom_addr;
+    wire [31:0] rom_data;
+    wire rom_cs;
+jtpang_char i_jtpang_char (
+    .rst      (rst      ),
+    .clk      (clk      ),
+    .clk24    (clk24    ),
+    .h        (h        ),
+    .hf       (hf       ),
+    .vf       (vf       ),
+    .hs       (hs       ),
+    .flip     (flip     ),
+    .vram_msb (vram_msb ),
+    .vram_cs  (vram_cs  ),
+    .wr_n     (wr_n     ),
+    .cpu_addr (cpu_addr ), // TODO: Check connection ! Signal/port not matching : Expecting logic [11:0]  -- Found logic [10:0]
+    .cpu_dout (cpu_dout ),
+    .vram_dout(vram_dout),
+    .rom_addr (rom_addr ),
+    .rom_data (rom_data ),
+    .rom_cs   (rom_cs   ),
+    .pxl      (ch_pxl   )
+);
+
+
 jtpang_colmix i_jtpang_colmix (
     .rst     (rst     ),
     .clk     (clk     ),

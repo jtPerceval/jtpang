@@ -27,10 +27,11 @@ module jtpang_char(
     input           clk,
     input           clk24,
 
-    input   [ 8:0]  hf,
     input   [ 8:0]  h,
+    input   [ 8:0]  hf,
     input   [ 8:0]  vf,
     input           hs,
+    input           flip,
 
     input           vram_msb,
     input           vram_cs,
@@ -50,18 +51,30 @@ wire [ 7:0] code_dout, pal_dout;
 wire        vram_we;
 wire [12:0] scan_addr;
 reg  [ 7:0] code_lsb;
+reg  [31:0] pxl_data;
+reg  [ 6:0] pal, nx_pal;
+reg         hflip, nx_hflip;
 
 assign vram_we   = vram_cs & ~wr_n;
 assign scan_addr = { 1'b0, vf[7:3], hf[8:3], h[0] };
 assign rom_cs    = ~hs;
+assign pxl       = { pal, hflip ? pxl_data[31:28] : pxl_data[3:0] };
 
 always @(posedge clk, posedge rst) begin
     if( rst ) begin
     end else if(pxl_cen) begin
         case( { hf[2:1], h[0] } )
             0: code_lsb <= code_dout;
-            1: rom_addr <= { code_dout, code_lsb, vf[2:0], 1'b0 };
+            1: begin
+                rom_addr <= { code_dout, code_lsb, vf[2:0], 1'b0 };
+                { nx_hflip, nx_pal } <= att_out;
+            end
         endcase
+        if( {hf[2:1],h[0]}==1 ) begin
+            pxl_data <= rom_data;
+            { hflip, pal } <= { nx_hflip^~flip, nx_pal };
+        end else
+            pxl_data <= cur_hflip ? pxl_data << 4 : pxl_data >> 4;
     end
 end
 
