@@ -36,9 +36,8 @@ module jtpang_video(
     input           vram_cs,
     input           attr_cs,
     input           wr_n,
-    input    [10:0] cpu_addr,
+    input    [11:0] cpu_addr,
     input    [ 7:0] cpu_dout,
-    output   [ 7:0] attr_dout,
     output   [ 7:0] vram_dout,
     output   [ 7:0] attr_dout,
     output   [ 7:0] pal_dout,
@@ -68,9 +67,10 @@ module jtpang_video(
 wire [ 7:0] obj_pxl;
 wire [10:0] char_pxl;
 wire [ 7:0] vf;
-wire [ 8:0] dma_addr;
+wire [ 8:0] dma_addr, v, h, hf;
 
 assign vf = v[7:0]^{8{flip}};
+assign hf = h^{9{flip}};
 
 // Video uses the 48 MHz clock
 jtframe_frac_cen #( .W( 2), .WC( 4)) u_cen48(
@@ -81,21 +81,44 @@ jtframe_frac_cen #( .W( 2), .WC( 4)) u_cen48(
     .cenb    (              )
 );
 
+jtframe_vtimer #(
+    .HB_START ( 9'd383      ),
+    .HB_END   ( 9'd511      ),
+    .HS_START ( 9'd384+9'd64),
+    .VB_END   ( 9'd271      ),  // 32 blank lines
+    .VS_START ( 9'd260      )
+) u_vtimer (
+    .clk      ( clk         ),
+    .pxl_cen  ( pxl_cen     ),
+    .vdump    ( v           ),
+    .vrender  (             ),
+    .vrender1 (             ),
+    .H        ( h           ),
+    .Hinit    (             ),
+    .Vinit    (             ),
+    .LHBL     ( LHBL        ),
+    .LVBL     ( LVBL        ),
+    .HS       ( HS          ),
+    .VS       ( VS          )
+);
+
 jtpang_char u_char (
     .rst      ( rst         ),
     .clk      ( clk         ),
     .clk24    ( clk24       ),
+    .pxl_cen  ( pxl_cen     ),
+
     .h        ( h           ),
     .hf       ( hf          ),
     .vf       ( vf          ),
-    .hs       ( hs          ),
+    .hs       ( HS          ),
     .flip     ( flip        ),
 
     .vram_msb ( vram_msb    ),
     .attr_cs  ( attr_cs     ),
     .vram_cs  ( vram_cs     ),
     .wr_n     ( wr_n        ),
-    .cpu_addr ( cpu_addr    ), // TODO: Check connection ! Signal/port not matching : Expecting logic [11:0]  -- Found logic [10:0]
+    .cpu_addr ( cpu_addr    ),
     .cpu_dout ( cpu_dout    ),
     .vram_dout( vram_dout   ),
     .attr_dout( attr_dout   ),
@@ -117,7 +140,7 @@ jtpang_obj u_obj (
     .h        ( h           ),
     .hf       ( hf          ),
     .vf       ( vf[7:0]     ),
-    .hs       ( hs          ),
+    .hs       ( HS          ),
     .flip     ( flip        ),
 
     .dma_go   ( dma_go      ),
@@ -143,12 +166,12 @@ jtpang_colmix u_colmix (
     .LVBL     ( LVBL        ),
 
     .obj_pxl  ( obj_pxl     ),
-    .ch_pxl   ( ch_pxl      ),
+    .ch_pxl   ( char_pxl    ),
 
     .pal_bank ( pal_bank    ),
     .pal_cs   ( pal_cs      ),
     .wr_n     ( wr_n        ),
-    .cpu_addr ( cpu_addr    ),
+    .cpu_addr ( cpu_addr[10:0] ),
     .cpu_dout ( cpu_dout    ),
     .pal_dout ( pal_dout    ),
 
