@@ -16,12 +16,6 @@
     Version: 1.0
     Date: 21-5-2022 */
 
-// The object table is stored here too
-// This is better than the way other CAPCOM
-// hardware does it: to store it in the CPU RAM
-// The benefit is that the DMA does not steal CPU
-// time, but CHAR time during blank, so it's
-// basically free
 module jtpang_char(
     input           rst,
     input           clk,

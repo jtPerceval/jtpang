@@ -217,7 +217,8 @@ jtframe_rom_2slots #(
 
 jtframe_rom_1slot #(
     .SLOT0_DW   (  32        ),
-    .SLOT0_AW   (  18        )
+    .SLOT0_AW   (  18        ),
+    .SLOT0_OKLATCH(  0       )
 ) u_bank3(
     .rst        ( rst        ),
     .clk        ( clk        ),
