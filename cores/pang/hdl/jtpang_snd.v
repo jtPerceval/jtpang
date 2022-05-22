@@ -50,6 +50,9 @@ module jtpang_snd(
 localparam [7:0] FM_GAIN  = 8'h10,
                  PCM_GAIN = 8'h03;
 
+wire signed [15:0] fm_snd;
+wire signed [13:0] pcm_snd;
+
 jtopll u_topll (
     .rst   ( rst        ),
     .clk   ( clk        ),
@@ -59,14 +62,14 @@ jtopll u_topll (
     .cs_n  ( ~fm_cs     ),
     .wr_n  ( wr_n       ),
     .dout  ( fm_dout    ),
-    .snd   ( snd        ),
+    .snd   ( fm_snd     ),
     .sample( sample     )
 );
 
 jt6295 u_pcm (
     .rst     ( rst      ),
     .clk     ( clk      ),
-    .cen     ( cpu_cen  ),
+    .cen     ( pcm_cen  ),
     .ss      ( 1'b1     ),
     .wrn     ( wr_n     ),
     .din     ( cpu_dout ),
@@ -74,16 +77,16 @@ jt6295 u_pcm (
     .rom_addr( rom_addr ),
     .rom_data( rom_data ),
     .rom_ok  ( rom_ok   ),
-    .sound   ( sound    ),
+    .sound   ( pcm_snd  ),
     .sample  (          )
 );
 
-jtframe_mixer u_mixer(
+jtframe_mixer #(.W1(14)) u_mixer(
     .rst  ( rst         ),
     .clk  ( clk         ),
-    .cen  ( cpu_cen     ),
-    .ch0  ( fm_dout     ),
-    .ch1  ( pcm_dout    ),
+    .cen  ( fm_cen      ),
+    .ch0  ( fm_snd      ),
+    .ch1  ( pcm_snd     ),
     .ch2  (             ),
     .ch3  (             ),
     .gain0( FM_GAIN     ),

@@ -87,10 +87,29 @@ module jtpang_game(
     output  [7:0]   debug_view
 );
 
-wire [3:0] n;
-wire [3:0] m;
-wire [3:0] cen24;
-wire       pcm_cen, fm_cen, cpu_cen;
+// clock enable signals
+wire [ 3:0] n;
+wire [ 3:0] m;
+wire [ 3:0] cen24;
+wire        pcm_cen, fm_cen, cpu_cen;
+
+// CPU bus
+wire [ 7:0] cpu_dout, pcm_dout, fm_dout,
+            vram_dout, attr_dout, pal_dout
+wire        fm_cs, pcm_cem, // pcm_cs reserved for SDRAM
+            wr_n, dma_go, busak_n, busrq,
+            pal_bank, pal_cs, vram_msb, vram_cs, attr_cs;
+wire [11:0] cpu_addr;
+
+// SDRAM
+wire [17:0] char_addr;
+wire [31:0] char_data;
+wire [16:0] obj_addr;
+wire [31:0] obj_data;
+wire        char_cs, obj_cs, obj_ok;
+wire [17:0] pcm_addr;
+wire [ 7:0] pcm_data;
+wire        pcm_ok;
 
 assign { fm_cen, cpu_cen } = cen[1:0];
 assign pcm_cen = cen[3];
@@ -103,15 +122,6 @@ jtframe_frac_cen #(.W(4), .WC(4)) u_cen24(
     .cen  ( cen24  ),
     .cenb (        )
 );
-
-// CPU bus
-wire [7 :0] cpu_dout, pcm_dout, fm_dout;
-wire        fm_cs, pcm_cem, // pcm_cs reserved for SDRAM
-            wr_n;
-// SDRAM
-wire [17:0] pcm_addr;
-wire [ 7:0] pcm_data;
-wire        pcm_ok;
 
 jtpang_snd u_snd (
     .rst        ( rst24         ),
@@ -138,6 +148,43 @@ jtpang_snd u_snd (
     .snd        ( snd           )
 );
 
+jtpang_video u_video(
+    .rst        ( rst           ),
+    .clk        ( clk           ),
+    .clk24      ( clk24         ),
+    .pxl2_cen   ( pxl2_cen      ),
+    .pxl_cen    ( pxl_cen       ),
+    .LHBL       ( LHBL          ),
+    .LVBL       ( LVBL          ),
+    .HS         ( HS            ),
+    .VS         ( VS            ),
+    .flip       ( dip_flip      ),
+    .pal_bank   ( pal_bank      ),
+    .pal_cs     ( pal_cs        ),
+    .vram_msb   ( vram_msb      ),
+    .vram_cs    ( vram_cs       ),
+    .attr_cs    ( attr_cs       ),
+    .wr_n       ( wr_n          ),
+    .cpu_addr   ( cpu_addr      ),
+    .cpu_dout   ( cpu_dout      ),
+    .vram_dout  ( vram_dout     ),
+    .attr_dout  ( attr_dout     ),
+    .pal_dout   ( pal_dout      ),
+    .dma_go     ( dma_go        ),
+    .busak_n    ( busak_n       ),
+    .busrq      ( busrq         ),
+    .char_addr  ( char_addr     ),
+    .char_data  ( char_data     ),
+    .char_cs    ( char_cs       ),
+    .obj_addr   ( obj_addr      ),
+    .obj_data   ( obj_data      ),
+    .obj_cs     ( obj_cs        ),
+    .obj_ok     ( obj_ok        ),
+    .red        ( red           ),
+    .green      ( green         ),
+    .blue       ( blue          ),
+    .gfx_en     ( gfx_en        )
+);
 
 
 endmodule
