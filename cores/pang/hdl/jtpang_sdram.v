@@ -35,13 +35,13 @@ module jtpang_sdram(
     // Char layer
     input            chr_cs,
     output           chr_ok,
-    input    [16:0]  chr_addr,
+    input    [17:0]  chr_addr,
     output   [31:0]  chr_data,
 
     // Obj
     output           obj_ok,
     input            obj_cs,
-    input    [17:0]  obj_addr,
+    input    [16:0]  obj_addr,
     output   [31:0]  obj_data,
 
     // Banks
@@ -100,8 +100,8 @@ end
 always @* begin
     prog_addr = pre_addr;
     // moves the H address bit to the LSBs
-//    if( is_obj )
-//        prog_addr[5:0] = { pre_addr[3:0], pre_addr[5:4] };
+    if( is_obj )
+        prog_addr[5:1] = { pre_addr[4:1], pre_addr[5] };
 end
 
 jtframe_dwnld #(

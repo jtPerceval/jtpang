@@ -30,8 +30,11 @@ module jtpang_main(
     output  reg        flip,
     input              LVBL,
     input              dip_pause,
+    output reg         char_en,
+    output reg         obj_en,
+    output reg         video_enb,
 
-    // Object
+    // Video
     output  reg        attr_cs,
     output  reg        vram_cs,
     output  reg        vram_msb,
@@ -39,8 +42,12 @@ module jtpang_main(
     input   [7:0]      attr_dout,
     input   [7:0]      pal_dout,
     input   [7:0]      vram_dout,
+    // DMA
     input              busrq_n,
     output             busak_n,
+    // sound
+    input   [7:0]      fm_dout,
+    input   [7:0]      oki_dout,
     // cabinet I/O
     input   [5:0]      joystick1,
     input   [5:0]      joystick2,
@@ -49,9 +56,9 @@ module jtpang_main(
     input              service,
     input              test,
     // NVRAM dump/restoration
-    input  [RAM_AW-1:0] prog_addr,
-    input  [7:0]        prog_data,
-    output [7:0]        prog_din,
+    input  [11:0]       prog_addr,
+    input  [ 7:0]       prog_data,
+    output [ 7:0]       prog_din,
     input               prog_we,
     input               prog_ram,
     // Kabuki
@@ -64,14 +71,15 @@ module jtpang_main(
     input               rom_ok
 );
 
-wire [ 7:0] dec_dout, cpu_dout, sys_dout;
+wire [ 7:0] dec_dout, sys_dout, ram_dout;
 wire [15:0] A;
 reg  [ 3:0] bank;
-reg  [ 7:0] cpu_din;
-wire        nvram_we, kabuki_we;
-wire        m1_n, rd_n, wr_n, mreq_n, rfsh_n;
-reg         ram_cs, rom_cs, cab_cs,
-            fm_cs, oki_cs, vbank_cs,
+reg  [ 7:0] cpu_din, cab_dout;
+wire        nvram_we;
+wire        m1_n, rd_n, wr_n, mreq_n, rfsh_n,
+            iorq_n;
+reg         ram_cs, cab_cs, misc_cs,
+            fm_cs, oki_cs, vbank_cs, bank_cs,
             oki_bank, pal_bank, obj_dma,
             eeprom_cs, eeprom_clk, eeprom_din;
 wire        eeprom_dout;
@@ -142,13 +150,13 @@ always @(posedge clk, posedge rst) begin
 end
 
 always @(posedge clk) begin
-    case( A[1:0] ) begin
+    case( A[1:0] )
         0: cab_dout <= { coin, service, 2'b11,
             start_button[0], 1'b1, start_button[1], 1'b1 };
         1: cab_dout <= { joystick1[3:0], joystick1[5:4], 2'b11 };
         2: cab_dout <= { joystick2[3:0], joystick2[5:4], 2'b11 };
         default:;
-    end
+    endcase
     cpu_din <=
         rom_cs  ? dec_dout  :
         ram_cs  ? ram_dout  :

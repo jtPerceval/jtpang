@@ -2,7 +2,7 @@
     JTPANG program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
     the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
+    ( at your option) any later version.
 
     JTPANG program is distributed in the hope that it will be useful,
     but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -100,22 +100,23 @@ wire        fm_cs, pcm_cem, // pcm_cs reserved for SDRAM
             wr_n, dma_go, busak_n, busrq,
             pal_bank, pal_cs, vram_msb, vram_cs, attr_cs;
 wire [11:0] cpu_addr;
+wire        kabuki_we, kabuki_en;
 
 // SDRAM
 wire [17:0] char_addr;
 wire [31:0] char_data;
 wire [16:0] obj_addr;
 wire [31:0] obj_data;
-wire        char_cs, obj_cs, obj_ok;
-wire [17:0] pcm_addr;
-wire [ 7:0] pcm_data;
-wire        pcm_ok;
+wire        main_cs, char_cs, obj_cs, pcm_cs;
+wire [17:0] main_addr, pcm_addr;
+wire [ 7:0] main_data, pcm_data;
+wire        main_ok, obj_ok, pcm_ok;
 
 assign { fm_cen, cpu_cen } = cen[1:0];
 assign pcm_cen = cen[3];
 
 // CPU and sound use the 24 MHz clock
-jtframe_frac_cen #(.W(4), .WC(4)) u_cen24(
+jtframe_frac_cen #( .W( 4), .WC( 4)) u_cen24(
     .clk  ( clk24  ),
     .n    ( 4'd1   ),
     .m    ( 4'd3   ),
@@ -123,7 +124,7 @@ jtframe_frac_cen #(.W(4), .WC(4)) u_cen24(
     .cenb (        )
 );
 
-jtpang_snd u_snd (
+jtpang_snd u_snd(
     .rst        ( rst24         ),
     .clk        ( clk24         ),
     .fm_cen     ( fm_cen        ),
@@ -186,5 +187,60 @@ jtpang_video u_video(
     .gfx_en     ( gfx_en        )
 );
 
+jtpang_sdram u_sdram(
+    .rst        ( rst           ),
+    .clk        ( clk           ),
+
+    .main_cs    ( main_cs       ),
+    .main_addr  ( main_addr     ),
+    .main_data  ( main_data     ),
+    .main_ok    ( main_ok       ),
+
+    .pcm_addr   ( pcm_addr      ),
+    .pcm_cs     ( pcm_cs        ),
+    .pcm_data   ( pcm_data      ),
+    .pcm_ok     ( pcm_ok        ),
+
+    .chr_cs     ( char_cs       ),
+    .chr_ok     (               ),
+    .chr_addr   ( char_addr     ),
+    .chr_data   ( char_data     ),
+
+    .obj_ok     ( obj_ok        ),
+    .obj_cs     ( obj_cs        ),
+    .obj_addr   ( obj_addr      ),
+    .obj_data   ( obj_data      ),
+
+    .ba0_addr   ( ba0_addr      ),
+    .ba1_addr   ( ba1_addr      ),
+    .ba2_addr   ( ba2_addr      ),
+    .ba3_addr   ( ba3_addr      ),
+    .ba_rd      ( ba_rd         ),
+    .ba_ack     ( ba_ack        ),
+    .ba_dst     ( ba_dst        ),
+    .ba_dok     ( ba_dok        ),
+    .ba_rdy     ( ba_rdy        ),
+    .data_read  ( data_read     ),
+
+    .downloading( downloading   ),
+    .dwnld_busy ( dwnld_busy    ),
+
+    .kabuki_we  ( kabuki_we     ),
+    .kabuki_en  ( kabuki_en     ),
+
+    .ioctl_addr ( ioctl_addr    ),
+    .ioctl_dout ( ioctl_dout    ),
+    .ioctl_wr   ( ioctl_wr      ),
+
+    .prog_addr  ( prog_addr     ),
+    .prog_data  ( prog_data     ),
+    .prog_mask  ( prog_mask     ),
+    .prog_ba    ( prog_ba       ),
+    .prog_we    ( prog_we       ),
+    .prog_rd    ( prog_rd       ),
+    .prog_ack   ( prog_ack      ),
+    .prog_rdy   ( prog_rdy      ),
+    .kabuki_en  ( kabuki_en     )
+);
 
 endmodule
