@@ -2,7 +2,7 @@
     JTPANG program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
     the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
+    ( at your option) any later version.
 
     JTPANG program is distributed in the hope that it will be useful,
     but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -27,14 +27,36 @@ module jtpang_video(
     output          LVBL,
     output          HS,
     output          VS,
+    input           flip,
 
     // CPU interface
     input           pal_bank,
     input           pal_cs,
+    input           vram_msb,
+    input           vram_cs,
+    input           attr_cs,
     input           wr_n,
     input    [10:0] cpu_addr,
     input    [ 7:0] cpu_dout,
+    output   [ 7:0] attr_dout,
+    output   [ 7:0] vram_dout,
+    output   [ 7:0] attr_dout,
     output   [ 7:0] pal_dout,
+
+    // DMA
+    input           dma_go,
+    input           busak_n,
+    output          busrq,
+
+    // ROM
+    output   [17:0] char_addr,
+    input    [31:0] char_data,
+    output          char_cs,
+
+    output   [16:0] obj_addr,
+    input    [31:0] obj_data,
+    output          obj_cs,
+    input           obj_ok,
 
     output   [3:0]  red,
     output   [3:0]  green,
@@ -44,74 +66,95 @@ module jtpang_video(
 );
 
 wire [ 7:0] obj_pxl;
-wire [10:0] ch_pxl;
+wire [10:0] char_pxl;
+wire [ 7:0] vf;
+wire [ 8:0] dma_addr;
 
+assign vf = v[7:0]^{8{flip}};
 
 // Video uses the 48 MHz clock
-jtframe_frac_cen #(.W(2), .WC(4)) u_cen48(
-    .clk  ( clk    ),
-    .n    ( 4'd1   ),
-    .m    ( 4'd3   ),
-    .cen  ( {pxl_cen, pxl2_cen} ),
-    .cenb (        )
+jtframe_frac_cen #( .W( 2), .WC( 4)) u_cen48(
+    .clk     ( clk          ),
+    .n       ( 4'd1         ),
+    .m       ( 4'd3         ),
+    .cen     ( {pxl_cen, pxl2_cen} ),
+    .cenb    (              )
 );
 
+jtpang_char u_char (
+    .rst      ( rst         ),
+    .clk      ( clk         ),
+    .clk24    ( clk24       ),
+    .h        ( h           ),
+    .hf       ( hf          ),
+    .vf       ( vf          ),
+    .hs       ( hs          ),
+    .flip     ( flip        ),
 
-    wire [8:0] h;
-    wire [8:0] hf;
-    wire [8:0] vf;
-    wire hs;
-    wire flip;
-    wire vram_msb;
-    wire vram_cs;
-    wire [7:0] vram_dout;
-    wire [17:0] rom_addr;
-    wire [31:0] rom_data;
-    wire rom_cs;
-jtpang_char i_jtpang_char (
-    .rst      (rst      ),
-    .clk      (clk      ),
-    .clk24    (clk24    ),
-    .h        (h        ),
-    .hf       (hf       ),
-    .vf       (vf       ),
-    .hs       (hs       ),
-    .flip     (flip     ),
-    .vram_msb (vram_msb ),
-    .vram_cs  (vram_cs  ),
-    .wr_n     (wr_n     ),
-    .cpu_addr (cpu_addr ), // TODO: Check connection ! Signal/port not matching : Expecting logic [11:0]  -- Found logic [10:0]
-    .cpu_dout (cpu_dout ),
-    .vram_dout(vram_dout),
-    .rom_addr (rom_addr ),
-    .rom_data (rom_data ),
-    .rom_cs   (rom_cs   ),
-    .pxl      (ch_pxl   )
+    .vram_msb ( vram_msb    ),
+    .attr_cs  ( attr_cs     ),
+    .vram_cs  ( vram_cs     ),
+    .wr_n     ( wr_n        ),
+    .cpu_addr ( cpu_addr    ), // TODO: Check connection ! Signal/port not matching : Expecting logic [11:0]  -- Found logic [10:0]
+    .cpu_dout ( cpu_dout    ),
+    .vram_dout( vram_dout   ),
+    .attr_dout( attr_dout   ),
+
+    // DMA
+    .busak_n  ( busak_n     ),
+    .dma_addr ( dma_addr    ),
+
+    .rom_addr ( char_addr   ),
+    .rom_data ( char_data   ),
+    .rom_cs   ( char_cs     ),
+    .pxl      ( char_pxl    )
 );
 
+jtpang_obj u_obj (
+    .rst      ( rst         ),
+    .clk      ( clk         ),
+    .pxl_cen  ( pxl_cen     ),
+    .h        ( h           ),
+    .hf       ( hf          ),
+    .vf       ( vf[7:0]     ),
+    .hs       ( hs          ),
+    .flip     ( flip        ),
 
-jtpang_colmix i_jtpang_colmix (
-    .rst     (rst     ),
-    .clk     (clk     ),
-    .clk24   (clk24   ),
+    .dma_go   ( dma_go      ),
+    .busrq    ( busrq       ),
+    .busak_n  ( busak_n     ),
+    .dma_din  ( vram_dout   ),
+    .dma_addr ( dma_addr    ),
 
-    .pxl_cen (pxl_cen ),
-    .LHBL    (LHBL    ),
-    .LVBL    (LVBL    ),
+    .rom_addr ( obj_addr    ), // TODO: Check connection ! Signal/port not matching : Expecting logic [16:0]  -- Found logic [17:0]
+    .rom_data ( obj_data    ),
+    .rom_cs   ( obj_cs      ),
+    .rom_ok   ( obj_ok      ),
+    .pxl      ( obj_pxl     )
+);
 
-    .obj_pxl (obj_pxl ),
-    .ch_pxl  (ch_pxl  ),
+jtpang_colmix u_colmix (
+    .rst      ( rst         ),
+    .clk      ( clk         ),
+    .clk24    ( clk24       ),
 
-    .pal_bank(pal_bank),
-    .pal_cs  (pal_cs  ),
-    .wr_n    (wr_n    ),
-    .cpu_addr(cpu_addr),
-    .cpu_dout(cpu_dout),
-    .pal_dout(pal_dout),
+    .pxl_cen  ( pxl_cen     ),
+    .LHBL     ( LHBL        ),
+    .LVBL     ( LVBL        ),
 
-    .red     (red     ),
-    .green   (green   ),
-    .blue    (blue    )
+    .obj_pxl  ( obj_pxl     ),
+    .ch_pxl   ( ch_pxl      ),
+
+    .pal_bank ( pal_bank    ),
+    .pal_cs   ( pal_cs      ),
+    .wr_n     ( wr_n        ),
+    .cpu_addr ( cpu_addr    ),
+    .cpu_dout ( cpu_dout    ),
+    .pal_dout ( pal_dout    ),
+
+    .red      ( red         ),
+    .green    ( green       ),
+    .blue     ( blue        )
 );
 
 endmodule

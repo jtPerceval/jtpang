@@ -44,7 +44,7 @@ reg  [10:0] pal_a;
 wire [ 7:0] col_half;
 reg         half;
 reg  [ 3:0] nr,ng,nb;
-wire        obj_blank;
+wire        obj_blank, pal_we;
 
 assign pal_we    = pal_cs & ~wr_n;
 assign obj_blank = &obj_pxl[3:0];
@@ -52,7 +52,7 @@ assign obj_blank = &obj_pxl[3:0];
 always @(posedge clk) begin
     half <= ~half;
     if( !LVBL ) begin
-        rgb <= 0;
+        { red, green, blue } <= 0;
     end else begin
         if( pxl_cen ) begin
             half <= 0;
@@ -69,7 +69,7 @@ end
 jtframe_dual_ram #(.aw(12)) u_dual_ram (
     // CPU
     .clk0  ( clk24      ),
-    .data0 ( cpu_dou    ),
+    .data0 ( cpu_dout   ),
     .addr0 ( { cpu_addr[0], pal_bank, cpu_addr[10:1] } ),
     .we0   ( pal_we     ),
     .q0    ( pal_dout   ),

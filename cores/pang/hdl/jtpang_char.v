@@ -17,42 +17,51 @@
     Date: 21-5-2022 */
 
 module jtpang_char(
-    input           rst,
-    input           clk,
-    input           clk24,
+    input             rst,
+    input             clk,
+    input             clk24,
+    input             pxl_cen,
 
-    input   [ 8:0]  h,
-    input   [ 8:0]  hf,
-    input   [ 8:0]  vf,
-    input           hs,
-    input           flip,
+    input     [ 8:0]  h,
+    input     [ 8:0]  hf,
+    input     [ 7:0]  vf,
+    input             hs,
+    input             flip,
 
-    input           vram_msb,
-    input           vram_cs,
-    input           wr_n,
-    input    [11:0] cpu_addr,
-    input    [ 7:0] cpu_dout,
-    output   [ 7:0] vram_dout,
+    input             vram_msb,
+    input             vram_cs,
+    input             attr_cs,
+    input             wr_n,
+    input      [11:0] cpu_addr,
+    input      [ 7:0] cpu_dout,
+    output     [ 7:0] vram_dout,
+    output     [ 7:0] attr_dout,
 
-    output   [17:0] rom_addr,
-    input    [31:0] rom_data,
-    output          rom_cs,
+    // DMA
+    input      [ 8:0] dma_addr,
+    input             busak_n,
 
-    output   [10:0] pxl
+    output reg [17:0] rom_addr,
+    input      [31:0] rom_data,
+    output            rom_cs,
+
+    output     [10:0] pxl
 );
 
 wire [ 7:0] code_dout, pal_dout;
-wire        vram_we;
-wire [12:0] scan_addr;
+wire        vram_we, attr_we;
+wire [12:0] scan_addr, vram_addr;
 reg  [ 7:0] code_lsb;
 reg  [31:0] pxl_data;
 reg  [ 6:0] pal, nx_pal;
 reg         hflip, nx_hflip;
 
 assign vram_we   = vram_cs & ~wr_n;
+assign attr_we   = attr_cs & ~wr_n;
 assign scan_addr = { 1'b0, vf[7:3], hf[8:3], h[0] };
 assign rom_cs    = ~hs;
 assign pxl       = { pal, hflip ? pxl_data[31:28] : pxl_data[3:0] };
+assign vram_addr = busak_n ? { vram_msb, cpu_addr } : { 1'b1, vf[7:5], dma_addr };
 
 always @(posedge clk, posedge rst) begin
     if( rst ) begin
@@ -60,15 +69,15 @@ always @(posedge clk, posedge rst) begin
         case( { hf[2:1], h[0] } )
             0: code_lsb <= code_dout;
             1: begin
-                rom_addr <= { code_dout, code_lsb, vf[2:0], 1'b0 };
-                { nx_hflip, nx_pal } <= att_out;
+                rom_addr <= { code_dout[5:0], code_lsb, vf[2:0], 1'b0 };
+                { nx_hflip, nx_pal } <= attr_dout;
             end
         endcase
         if( {hf[2:1],h[0]}==1 ) begin
             pxl_data <= rom_data;
             { hflip, pal } <= { nx_hflip^~flip, nx_pal };
         end else
-            pxl_data <= cur_hflip ? pxl_data << 4 : pxl_data >> 4;
+            pxl_data <= hflip ? pxl_data << 4 : pxl_data >> 4;
     end
 end
 
@@ -77,9 +86,9 @@ jtframe_dual_ram #(.aw(13)) u_vram (
     // CPU
     .clk0  ( clk24      ),
     .data0 ( cpu_dout   ),
-    .addr0 ( { vram_msb, cpu_addr } ),
-    .we0   ( attr_we    ),
-    .q0    ( attr_dout  ),
+    .addr0 ( vram_addr  ),
+    .we0   ( vram_we    ),
+    .q0    ( vram_dout  ),
     // Scan
     .clk1  ( clk        ),
     .data1 ( 8'd0       ),
@@ -93,8 +102,8 @@ jtframe_dual_ram #(.aw(11)) u_attr (
     .clk0  ( clk24      ),
     .data0 ( cpu_dout   ),
     .addr0 ( cpu_addr[10:0]   ),
-    .we0   ( vram_we    ),
-    .q0    ( vram_dout  ),
+    .we0   ( attr_we    ),
+    .q0    ( attr_dout  ),
     // Scan
     .clk1  ( clk        ),
     .data1 ( 8'd0       ),
