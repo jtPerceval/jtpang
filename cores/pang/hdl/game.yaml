@@ -29,10 +29,12 @@ jtframe:
   - from: cpu
     get:
       - jtframe_z80.yaml
+      - jtframe_kabuki.v
   - from: sound
     get:
       - jtframe_mixer.v
 modules:
   jt:
-    - name: jtopl
     - name: jt6295
+  other:
+    - get: [jtopl/hdl/jtopll.yaml]

@@ -22,7 +22,7 @@ module jtpang_sdram(
 
     // Main CPU
     input            main_cs,
-    input     [17:0] main_addr,
+    input     [19:0] main_addr,
     output    [ 7:0] main_data,
     output           main_ok,
 
@@ -33,10 +33,10 @@ module jtpang_sdram(
     output           pcm_ok,
 
     // Char layer
-    input            chr_cs,
-    output           chr_ok,
-    input    [17:0]  chr_addr,
-    output   [31:0]  chr_data,
+    input            char_cs,
+    output           char_ok,
+    input    [17:0]  char_addr,
+    output   [31:0]  char_data,
 
     // Obj
     output           obj_ok,
@@ -61,7 +61,7 @@ module jtpang_sdram(
     input            downloading,
     output           dwnld_busy,
     output           kabuki_we,
-    output           kabuki_en,
+    output reg       kabuki_en,
 
     input    [24:0]  ioctl_addr,
     input    [ 7:0]  ioctl_dout,
@@ -85,12 +85,11 @@ localparam [24:0] BA1_START   = `PCM_START,
 
 wire [21:0] pre_addr;
 wire        is_char, is_obj, prom_we, header;
-reg         kabuki_en;
 
 assign dwnld_busy = downloading;
 assign is_char   = prog_ba==2;
 assign is_obj    = prog_ba==3 && !prom_we;
-assign kabuki_we = ioctl_wr & header;
+assign kabuki_we = ioctl_wr && header && ioctl_addr[3:0]<10;
 
 always @(posedge clk) begin
     if( kabuki_we && ioctl_addr[3:0]==0 )
@@ -126,10 +125,11 @@ jtframe_dwnld #(
     .header       ( header         ),
     .sdram_ack    ( prog_ack       )
 );
+
 /* verilator tracing_off */
 jtframe_rom_1slot #(
     .SLOT0_DW( 8),
-    .SLOT0_AW(18)
+    .SLOT0_AW(20)
 ) u_bank0(
     .rst         ( rst        ),
     .clk         ( clk        ),
@@ -148,29 +148,18 @@ jtframe_rom_1slot #(
     .data_read   ( data_read  )
 );
 
-// Bank 1: Sound
-
-jtframe_rom_2slots #(
-    .SLOT0_DW(   8),
-    .SLOT0_AW(  16),
-
-    .SLOT1_DW(   8),
-    .SLOT1_AW(  16),
-
-    .SLOT1_OFFSET( PCM_OFFSET )
+// Bank 1: PCM sound
+jtframe_rom_1slot #(
+    .SLOT0_DW   (   8       ),
+    .SLOT0_AW   (  18       )
 ) u_bank1(
     .rst        ( rst       ),
     .clk        ( clk       ),
 
-    .slot0_addr ( snd_addr  ),
-    .slot0_dout ( snd_data  ),
-    .slot0_cs   ( snd_cs    ),
-    .slot0_ok   ( snd_ok    ),
-
-    .slot1_addr (pcm_addr ),
-    .slot1_dout (pcm_data ),
-    .slot1_cs   (pcm_cs   ),
-    .slot1_ok   (pcm_ok   ),
+    .slot0_addr ( pcm_addr  ),
+    .slot0_dout ( pcm_data  ),
+    .slot0_cs   ( pcm_cs    ),
+    .slot0_ok   ( pcm_ok    ),
 
     // SDRAM controller interface
     .sdram_addr ( ba1_addr  ),
@@ -181,28 +170,18 @@ jtframe_rom_2slots #(
     .data_read  ( data_read )
 );
 
-// Bank 2: Backgrounds
-
-jtframe_rom_2slots #(
+// Bank 2: Char layer
+jtframe_rom_1slot #(
     .SLOT0_DW   (         32 ), // Tiles
-    .SLOT0_AW   (         17 ),
-    .SLOT1_DW   (         32 ), // background images
-    .SLOT1_AW   (         18 ),
-
-    .SLOT1_OFFSET(SCR2_OFFSET)
+    .SLOT0_AW   (         18 )
 ) u_bank2(
     .rst        ( rst        ),
     .clk        ( clk        ),
 
-    .slot0_addr ( scr1_addr  ),
-    .slot0_dout ( scr1_data  ),
-    .slot0_cs   ( scr1_cs    ),
-    .slot0_ok   ( scr1_ok    ),
-
-    .slot1_addr ( scr2_addr  ),
-    .slot1_dout ( scr2_data  ),
-    .slot1_cs   ( scr2_cs    ),
-    .slot1_ok   ( scr2_ok    ),
+    .slot0_addr ( char_addr  ),
+    .slot0_dout ( char_data  ),
+    .slot0_cs   ( char_cs    ),
+    .slot0_ok   ( char_ok    ),
 
     // SDRAM controller interface
     .sdram_addr ( ba2_addr   ),
@@ -214,10 +193,9 @@ jtframe_rom_2slots #(
 );
 
 // Bank 3: objects
-
 jtframe_rom_1slot #(
     .SLOT0_DW   (  32        ),
-    .SLOT0_AW   (  18        ),
+    .SLOT0_AW   (  17        ),
     .SLOT0_OKLATCH(  0       )
 ) u_bank3(
     .rst        ( rst        ),

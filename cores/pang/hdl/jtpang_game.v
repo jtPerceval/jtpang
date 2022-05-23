@@ -33,8 +33,8 @@ module jtpang_game(
     // cabinet I/O
     input   [ 1:0]  start_button,
     input   [ 1:0]  coin_input,
-    input   [ 8:0]  joystick1,
-    input   [ 8:0]  joystick2,
+    input   [ 5:0]  joystick1,
+    input   [ 5:0]  joystick2,
 
     // SDRAM interface
     input           downloading,
@@ -50,13 +50,18 @@ module jtpang_game(
     input    [ 3:0] ba_dst,
     input    [ 3:0] ba_dok,
     input    [ 3:0] ba_rdy,
+    output   [15:0] ba0_din,
+    output   [ 1:0] ba0_din_m,
+    output          ba_wr,
 
     input    [15:0] data_read,
 
     // RAM/ROM LOAD
     input   [24:0]  ioctl_addr,
     input   [ 7:0]  ioctl_dout,
+    output  [ 7:0]  ioctl_din,
     input           ioctl_wr,
+    input           ioctl_ram,
     output  [21:0]  prog_addr,
     output  [15:0]  prog_data,
     output  [ 1:0]  prog_mask,
@@ -95,25 +100,33 @@ wire        pcm_cen, fm_cen, cpu_cen;
 
 // CPU bus
 wire [ 7:0] cpu_dout, pcm_dout, fm_dout,
-            vram_dout, attr_dout, pal_dout
-wire        fm_cs, pcm_cem, // pcm_cs reserved for SDRAM
-            wr_n, dma_go, busak_n, busrq,
-            pal_bank, pal_cs, vram_msb, vram_cs, attr_cs;
+            vram_dout, attr_dout, pal_dout;
+wire        fm_cs, oki_cs,
+            cpu_rnw, busrq, int_n,
+            pal_cs, vram_msb, vram_cs, attr_cs;
 wire [11:0] cpu_addr;
 wire        kabuki_we, kabuki_en;
+wire        char_en, obj_en, video_enb, pal_bank;
+wire        dma_go, busak_n, busrq_n;
 
 // SDRAM
 wire [17:0] char_addr;
 wire [31:0] char_data;
 wire [16:0] obj_addr;
 wire [31:0] obj_data;
-wire        main_cs, char_cs, obj_cs, pcm_cs;
-wire [17:0] main_addr, pcm_addr;
+wire        main_cs, char_cs, obj_cs;
+wire [17:0] pcm_addr;
+wire [19:0] main_addr;
 wire [ 7:0] main_data, pcm_data;
 wire        main_ok, obj_ok, pcm_ok;
 
-assign { fm_cen, cpu_cen } = cen[1:0];
-assign pcm_cen = cen[3];
+assign { fm_cen, cpu_cen } = cen24[1:0];
+assign pcm_cen = cen24[3];
+// The game does not write to the SDRAM
+assign ba_wr     = 0;
+assign ba0_din   = 0;
+assign ba0_din_m = 0;
+assign debug_view= 0;
 
 // CPU and sound use the 24 MHz clock
 jtframe_frac_cen #( .W( 4), .WC( 4)) u_cen24(
@@ -124,18 +137,82 @@ jtframe_frac_cen #( .W( 4), .WC( 4)) u_cen24(
     .cenb (        )
 );
 
+jtpang_main u_main(
+    .clk         ( clk          ),
+    .rst         ( rst          ),
+    .cpu_cen     ( cpu_cen      ),
+    .int_n       ( int_n        ),
+
+    .cpu_addr    ( cpu_addr     ), // TODO: Check connection ! Signal/port not matching : Expecting logic [19:0]  -- Found logic [17:0]
+    .cpu_rnw     ( cpu_rnw      ),
+    .cpu_dout    ( cpu_dout     ),
+
+    .flip        ( dip_flip     ),
+    .LVBL        ( LVBL         ),
+    .dip_pause   ( dip_pause    ),
+
+    .char_en     ( char_en      ),
+    .obj_en      ( obj_en       ),
+    .video_enb   ( video_enb    ),
+
+    .attr_cs     ( attr_cs      ),
+    .vram_cs     ( vram_cs      ),
+    .vram_msb    ( vram_msb     ),
+    .pal_cs      ( pal_cs       ),
+    .pal_bank    ( pal_bank     ),
+    .attr_dout   ( attr_dout    ),
+    .pal_dout    ( pal_dout     ),
+    .vram_dout   ( vram_dout    ),
+
+    // Sound
+    .fm_cs       ( fm_cs        ),
+    .pcm_cs      ( oki_cs       ),
+    .fm_dout     ( fm_dout      ),
+    .pcm_dout    ( pcm_dout     ),
+
+    // DMA
+    .dma_go      ( dma_go       ),
+    .busrq_n     ( ~busrq       ),
+    .busak_n     ( busak_n      ),
+
+    .joystick1   ( joystick1    ),
+    .joystick2   ( joystick2    ),
+    .start_button(start_button  ),
+    .coin        ( coin_input[0]),
+    .service     ( service      ),
+    .test        ( dip_test     ),
+
+    // NVRAM
+    .prog_addr   ( ioctl_addr[11:0] ),
+    .prog_data   ( ioctl_dout   ),
+    .prog_din    ( ioctl_din    ),
+    .prog_we     ( ioctl_wr     ),
+    .prog_ram    ( ioctl_ram    ),
+
+    .kabuki_we   ( kabuki_we    ),
+    .kabuki_en   ( kabuki_en    ),
+
+    // ROM
+    .rom_addr    ( main_addr    ),
+    .rom_cs      ( main_cs      ),
+    .rom_data    ( main_data    ),
+    .rom_ok      ( main_ok      )
+);
+
+`ifndef NOSOUND
 jtpang_snd u_snd(
     .rst        ( rst24         ),
     .clk        ( clk24         ),
     .fm_cen     ( fm_cen        ),
     .pcm_cen    ( pcm_cen       ),
+
     .cpu_dout   ( cpu_dout      ),
-    .wr_n       ( wr_n          ),
+    .wr_n       ( cpu_rnw       ),
     .a0         ( cpu_addr[0]   ),
     .fm_dout    ( fm_dout       ),
     .fm_cs      ( fm_cs         ),
     .pcm_dout   ( pcm_dout      ),
-    .pcm_cs     ( pcm_ce        ),
+    .pcm_cs     ( oki_cs        ),
 
     .enable_fm  ( enable_fm     ),
     .enable_psg ( enable_psg    ),
@@ -148,6 +225,14 @@ jtpang_snd u_snd(
     .sample     ( sample        ),
     .snd        ( snd           )
 );
+`else
+    assign pcm_addr = 0;
+    assign sample   = 0;
+    assign game_led = 0;
+    assign snd      = 0;
+    assign pcm_dout = 0;
+    assign fm_dout  = 0;
+`endif
 
 jtpang_video u_video(
     .rst        ( rst           ),
@@ -155,32 +240,39 @@ jtpang_video u_video(
     .clk24      ( clk24         ),
     .pxl2_cen   ( pxl2_cen      ),
     .pxl_cen    ( pxl_cen       ),
+    .int_n      ( int_n         ),
+
     .LHBL       ( LHBL          ),
     .LVBL       ( LVBL          ),
     .HS         ( HS            ),
     .VS         ( VS            ),
     .flip       ( dip_flip      ),
+
     .pal_bank   ( pal_bank      ),
     .pal_cs     ( pal_cs        ),
     .vram_msb   ( vram_msb      ),
     .vram_cs    ( vram_cs       ),
     .attr_cs    ( attr_cs       ),
-    .wr_n       ( wr_n          ),
+    .wr_n       ( cpu_rnw       ),
     .cpu_addr   ( cpu_addr      ),
     .cpu_dout   ( cpu_dout      ),
     .vram_dout  ( vram_dout     ),
     .attr_dout  ( attr_dout     ),
     .pal_dout   ( pal_dout      ),
+
     .dma_go     ( dma_go        ),
     .busak_n    ( busak_n       ),
     .busrq      ( busrq         ),
+
     .char_addr  ( char_addr     ),
     .char_data  ( char_data     ),
     .char_cs    ( char_cs       ),
+
     .obj_addr   ( obj_addr      ),
     .obj_data   ( obj_data      ),
     .obj_cs     ( obj_cs        ),
     .obj_ok     ( obj_ok        ),
+
     .red        ( red           ),
     .green      ( green         ),
     .blue       ( blue          ),
@@ -197,14 +289,14 @@ jtpang_sdram u_sdram(
     .main_ok    ( main_ok       ),
 
     .pcm_addr   ( pcm_addr      ),
-    .pcm_cs     ( pcm_cs        ),
+    .pcm_cs     ( 1'b1          ),
     .pcm_data   ( pcm_data      ),
     .pcm_ok     ( pcm_ok        ),
 
-    .chr_cs     ( char_cs       ),
-    .chr_ok     (               ),
-    .chr_addr   ( char_addr     ),
-    .chr_data   ( char_data     ),
+    .char_cs    ( char_cs       ),
+    .char_ok    (               ),
+    .char_addr  ( char_addr     ),
+    .char_data  ( char_data     ),
 
     .obj_ok     ( obj_ok        ),
     .obj_cs     ( obj_cs        ),
@@ -239,8 +331,7 @@ jtpang_sdram u_sdram(
     .prog_we    ( prog_we       ),
     .prog_rd    ( prog_rd       ),
     .prog_ack   ( prog_ack      ),
-    .prog_rdy   ( prog_rdy      ),
-    .kabuki_en  ( kabuki_en     )
+    .prog_rdy   ( prog_rdy      )
 );
 
 endmodule

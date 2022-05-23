@@ -28,6 +28,7 @@ module jtpang_video(
     output          HS,
     output          VS,
     input           flip,
+    output          int_n,
 
     // CPU interface
     input           pal_bank,
@@ -69,8 +70,9 @@ wire [10:0] char_pxl;
 wire [ 7:0] vf;
 wire [ 8:0] dma_addr, v, h, hf;
 
-assign vf = v[7:0]^{8{flip}};
-assign hf = h^{9{flip}};
+assign vf    = v[7:0]^{8{flip}};
+assign hf    = h^{9{flip}};
+assign int_n = !( !LVBL || v[6:5]!=2'b11 );
 
 // Video uses the 48 MHz clock
 jtframe_frac_cen #( .W( 2), .WC( 4)) u_cen48(

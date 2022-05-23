@@ -16,6 +16,8 @@
     Version: 1.0
     Date: 21-5-2022 */
 
+/* verilator tracing_off */
+
 module jtpang_snd(
     input              clk,
     input              rst,
@@ -98,3 +100,5 @@ jtframe_mixer #(.W1(14)) u_mixer(
 );
 
 endmodule
+
+/* verilator tracing_on */
