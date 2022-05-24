@@ -7,3 +7,6 @@
 [submodule "modules/jt6295"]
 	path = modules/jt6295
 	url = https://github.com/jotego/jt6295
+[submodule "modules/jteeprom"]
+	path = modules/jteeprom
+	url = https://github.com/jotego/jteeprom.git
