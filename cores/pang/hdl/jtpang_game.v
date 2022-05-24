@@ -121,14 +121,14 @@ wire [ 7:0] main_data, pcm_data;
 wire        main_ok, obj_ok, pcm_ok;
 
 assign { fm_cen, cpu_cen } = cen24[1:0];
-assign pcm_cen = cen24[3];
+assign pcm_cen    = cen24[3];
 // The game does not write to the SDRAM
-assign ba_wr     = 0;
-assign ba0_din   = 0;
-assign ba0_din_m = 0;
-assign debug_view= 0;
+assign ba_wr      = 0;
+assign ba0_din    = 0;
+assign ba0_din_m  = 0;
+assign debug_view = 0;
 
-// CPU and sound use the 24 MHz clock
+// The sound uses the 24 MHz clock
 jtframe_frac_cen #( .W( 4), .WC( 4)) u_cen24(
     .clk  ( clk24  ),
     .n    ( 4'd1   ),
@@ -140,10 +140,10 @@ jtframe_frac_cen #( .W( 4), .WC( 4)) u_cen24(
 jtpang_main u_main(
     .clk         ( clk          ),
     .rst         ( rst          ),
-    .cpu_cen     ( cpu_cen      ),
+    .cpu_cen     ( pxl_cen      ),
     .int_n       ( int_n        ),
 
-    .cpu_addr    ( cpu_addr     ), // TODO: Check connection ! Signal/port not matching : Expecting logic [19:0]  -- Found logic [17:0]
+    .cpu_addr    ( cpu_addr     ),
     .cpu_rnw     ( cpu_rnw      ),
     .cpu_dout    ( cpu_dout     ),
 

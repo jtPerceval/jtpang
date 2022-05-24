@@ -17,7 +17,7 @@
     Date: 20-5-2022 */
 
 module jtpang_main(
-    input               clk,
+    input               clk,    // must run at 48MHz for Kabuki to be in time
     input               rst,
     input               cpu_cen,
     input               int_n,
@@ -76,29 +76,32 @@ module jtpang_main(
     input               rom_ok
 );
 
-wire [ 7:0] dec_dout, sys_dout, ram_dout;
+wire [ 7:0] dec_dout, sys_dout, ram_dout, nvram_dout, eeprom_dout;
 wire [15:0] A;
 reg  [ 3:0] bank;
 reg  [ 7:0] cpu_din, cab_dout;
-wire        nvram_we;
+wire        nvram_we, eeprom_we;
 wire        m1_n, rd_n, wr_n, mreq_n, rfsh_n,
             iorq_n;
 reg         ram_cs, cab_cs, misc_cs, sys_cs,
             vbank_cs, bank_cs,
             pcm_bank,
-            eeprom_cs, eeprom_clk, eeprom_din;
-wire        eeprom_dout;
+            scs, sclk, sdi; // EEPROM control signals
+wire        sdo;
 
-assign nvram_we = prog_ram & prog_we;
-assign sys_dout = { eeprom_dout, 3'b111, LVBL, 1'b1, test,
-            1'b1 }; // Should be related to the IRQ source, whether
+// NVRAM & EEPROM can be dumped to the SD card
+assign nvram_we  = prog_ram & prog_we & !prog_addr[12];
+assign eeprom_we = prog_ram & prog_we & prog_addr[12];
+assign prog_din  = prog_addr[12] ? eeprom_dout : nvram_dout;
+
+assign sys_dout  = { sdo, 3'b111, LVBL, 1'b1, test,
+            ~LVBL }; // Bit 0 should be related to the IRQ source, whether
             // it was caused by LVBL or not
 assign cpu_addr = A[11:0];
 assign cpu_rnw  = wr_n;
 
 // TO DO
 assign sys_cs = 0;
-assign eeprom_dout = 0;
 
 always @* begin
     rom_addr = { 6'd0, A[13:0] };
@@ -130,9 +133,9 @@ always @(posedge clk, posedge rst) begin
         obj_en    <= 1;
         video_enb <= 0;
         vram_msb  <= 0;
-        eeprom_cs <= 0;
-        eeprom_clk<= 0;
-        eeprom_din<= 0;
+        scs <= 0;
+        sclk<= 0;
+        sdi<= 0;
     end else begin
         if( bank_cs ) bank <= cpu_dout[3:0];
         if( vbank_cs) vram_msb <= cpu_dout[0];
@@ -152,9 +155,9 @@ always @(posedge clk, posedge rst) begin
         end
         if( !iorq_n && !wr_n ) begin
             case( A[4:0] )
-                5'h08: eeprom_cs  <= cpu_dout[0];
-                5'h10: eeprom_clk <= cpu_dout[0];
-                5'h18: eeprom_din <= cpu_dout[0];
+                5'h08: scs  <= cpu_dout[0];
+                5'h10: sclk <= cpu_dout[0];
+                5'h18: sdi <= cpu_dout[0];
                 default:;
             endcase
         end
@@ -242,5 +245,22 @@ jtframe_sysz80_nvram #(
     assign prog_din = 0;
     assign ram_dout = 0;
 `endif
+
+// 128 bytes
+jt9346 #(.DW(8),.AW(7)) u_eeprom(
+    .rst        ( rst       ),  // system reset
+    .clk        ( clk       ),  // system clock
+    // chip interface
+    .sclk       ( sclk      ),  // serial clock
+    .sdi        ( sdi       ),  // serial data in
+    .sdo        ( sdo       ),  // serial data out and ready/not busy signal
+    .scs        ( scs       ),  // chip select, active high. Goes low in between instructions
+    // Dump access
+    .dump_clk   ( clk       ),  // same as prom_we module
+    .dump_addr  ( prog_addr ),
+    .dump_we    ( eeprom_we ),
+    .dump_din   ( prog_din  ),
+    .dump_dout  (eeprom_dout)
+);
 
 endmodule

@@ -68,7 +68,7 @@ jtopll u_topll (
     .sample( sample     )
 );
 
-jt6295 u_pcm (
+jt6295 #(.INTERPOL(0)) u_pcm (
     .rst     ( rst      ),
     .clk     ( clk      ),
     .cen     ( pcm_cen  ),

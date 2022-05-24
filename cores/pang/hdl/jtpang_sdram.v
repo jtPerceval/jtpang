@@ -89,7 +89,7 @@ wire        is_char, is_obj, prom_we, header;
 assign dwnld_busy = downloading;
 assign is_char   = prog_ba==2;
 assign is_obj    = prog_ba==3 && !prom_we;
-assign kabuki_we = ioctl_wr && header && ioctl_addr[3:0]<10;
+assign kabuki_we = ioctl_wr && header && ioctl_addr[3:0]<11;
 
 always @(posedge clk) begin
     if( kabuki_we && ioctl_addr[3:0]==0 )
@@ -214,5 +214,6 @@ jtframe_rom_1slot #(
     .data_rdy   ( ba_rdy[3]  ),
     .data_read  ( data_read  )
 );
+
 /* verilator tracing_on */
 endmodule

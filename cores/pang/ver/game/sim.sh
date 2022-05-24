@@ -7,8 +7,8 @@ if [ ! -e rom.bin ]; then
 fi
 
 jtsim -mist -sysname pang $*
-rm -f test.vcd
-mkfifo test.vcd
-vcd2fst -p test.vcd test.fst&
-obj_dir/sim --trace -frame 1
-rm -f test.vcd
+# rm -f test.vcd
+# mkfifo test.vcd
+# vcd2fst -p test.vcd test.fst&
+# obj_dir/sim --trace -frame 1
+# rm -f test.vcd
