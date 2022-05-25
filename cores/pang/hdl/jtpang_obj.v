@@ -53,7 +53,7 @@ always @(posedge clk, posedge rst) begin
         dma_addr <= 0;
     end else begin
         dma_go_l <= dma_go;
-        if( dma_go & ~dma_go ) begin
+        if( dma_go & ~dma_go_l ) begin
             busrq    <= 1;
             dma_we   <= 0;
             dma_addr <= 0;
@@ -121,7 +121,7 @@ always @(posedge clk, posedge rst) begin
             drawn     <= 0;
             scan_done <= 0;
         end
-        if( scan_done && scan_cen ) begin
+        if( !scan_done && scan_cen ) begin
             if( sub_cnt!=3 ) sub_cnt <= sub_cnt + 1'd1;
             case( sub_cnt )
                 0: dr_code[7:0] <= scan_dout;

@@ -94,8 +94,8 @@ assign nvram_we  = prog_ram & prog_we & !prog_addr[12];
 assign eeprom_we = prog_ram & prog_we & prog_addr[12];
 assign prog_din  = prog_addr[12] ? eeprom_dout : nvram_dout;
 
-assign sys_dout  = { sdo, 3'b111, LVBL, 1'b1, test,
-            ~LVBL }; // Bit 0 should be related to the IRQ source, whether
+assign sys_dout  = { sdo, 3'b111, ~video_enb, 1'b1, test,
+            LVBL };
             // it was caused by LVBL or not
 assign cpu_addr = A[11:0];
 assign cpu_rnw  = wr_n;
@@ -146,7 +146,7 @@ always @(posedge clk, posedge rst) begin
             // bit 6 is CHAR enable, but it goes
             // through a jumper. Pang! does not connect it
             flip      <= cpu_dout[2];
-            video_enb <= cpu_dout[3];
+            video_enb <= cpu_dout[3]; // PALENB
             pcm_bank  <= cpu_dout[4];
             pal_bank  <= cpu_dout[5];
             char_en   <= cpu_dout[6];

@@ -60,7 +60,7 @@ assign attr_we   = attr_cs & ~wr_n;
 assign scan_addr = { 1'b0, vf[7:3], hf[8:3], h[0] };
 assign rom_cs    = ~hs;
 assign pxl       = { pal, hflip ? pxl_data[31:28] : pxl_data[3:0] };
-assign vram_addr = busak_n ? { vram_msb, cpu_addr } : { 1'b1, vf[7:5], dma_addr };
+assign vram_addr = busak_n ? { vram_msb, cpu_addr } : { 1'b1, 3'b0, dma_addr };
 
 always @(posedge clk, posedge rst) begin
     if( rst ) begin
