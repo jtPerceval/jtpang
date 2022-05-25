@@ -18,6 +18,7 @@
 *.pin
 *.sof
 *.jdi
+*bak
 .simvision
 log/*
 sim

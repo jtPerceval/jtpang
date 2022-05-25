@@ -19,7 +19,6 @@
 module jtpang_char(
     input             rst,
     input             clk,
-    input             clk24,
     input             pxl_cen,
 
     input     [ 8:0]  h,
@@ -48,7 +47,7 @@ module jtpang_char(
     output     [10:0] pxl
 );
 
-wire [ 7:0] code_dout, pal_dout;
+wire [ 7:0] code_dout, scan_dout;
 wire        vram_we, attr_we;
 wire [12:0] scan_addr, vram_addr;
 reg  [ 7:0] code_lsb;
@@ -70,11 +69,20 @@ always @(posedge clk, posedge rst) begin
             0: code_lsb <= code_dout;
             1: begin
                 rom_addr <= { code_dout[5:0], code_lsb, vf[2:0], 1'b0 };
-                { nx_hflip, nx_pal } <= attr_dout;
+                { nx_hflip, nx_pal } <= scan_dout;
             end
         endcase
         if( {hf[2:1],h[0]}==1 ) begin
-            pxl_data <= rom_data;
+            pxl_data <= {
+                rom_data[15], rom_data[11], rom_data[ 7], rom_data[ 3],
+                rom_data[14], rom_data[10], rom_data[ 6], rom_data[ 2],
+                rom_data[13], rom_data[ 9], rom_data[ 5], rom_data[ 1],
+                rom_data[12], rom_data[ 8], rom_data[ 4], rom_data[ 0],
+                rom_data[31], rom_data[27], rom_data[23], rom_data[19],
+                rom_data[30], rom_data[26], rom_data[22], rom_data[18],
+                rom_data[29], rom_data[25], rom_data[21], rom_data[17],
+                rom_data[28], rom_data[24], rom_data[20], rom_data[16]
+            };
             { hflip, pal } <= { nx_hflip^~flip, nx_pal };
         end else
             pxl_data <= hflip ? pxl_data << 4 : pxl_data >> 4;
@@ -84,7 +92,7 @@ end
 // Upper half = objects, lower half = tile map
 jtframe_dual_ram #(.aw(13)) u_vram (
     // CPU
-    .clk0  ( clk24      ),
+    .clk0  ( clk        ),
     .data0 ( cpu_dout   ),
     .addr0 ( vram_addr  ),
     .we0   ( vram_we    ),
@@ -94,12 +102,12 @@ jtframe_dual_ram #(.aw(13)) u_vram (
     .data1 ( 8'd0       ),
     .addr1 ( scan_addr  ),
     .we1   ( 1'd0       ),
-    .q1    ( pal_dout   )
+    .q1    ( code_dout  )
 );
 
 jtframe_dual_ram #(.aw(11)) u_attr (
     // CPU
-    .clk0  ( clk24      ),
+    .clk0  ( clk        ),
     .data0 ( cpu_dout   ),
     .addr0 ( cpu_addr[10:0]   ),
     .we0   ( attr_we    ),
@@ -107,9 +115,9 @@ jtframe_dual_ram #(.aw(11)) u_attr (
     // Scan
     .clk1  ( clk        ),
     .data1 ( 8'd0       ),
-    .addr1 ( scan_addr[11:1]  ),
+    .addr1 ( scan_addr[11:1] ),
     .we1   ( 1'd0       ),
-    .q1    ( code_dout  )
+    .q1    ( scan_dout  )
 );
 
 endmodule

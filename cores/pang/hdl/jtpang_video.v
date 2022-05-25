@@ -19,7 +19,6 @@
 module jtpang_video(
     input           rst,
     input           clk,
-    input           clk24,
 
     output          pxl2_cen,   // 16   MHz
     output          pxl_cen,    //  8   MHz
@@ -84,9 +83,10 @@ jtframe_frac_cen #( .W( 2), .WC( 4)) u_cen48(
 );
 
 jtframe_vtimer #(
-    .HB_START ( 9'd383      ),
-    .HB_END   ( 9'd511      ),
-    .HS_START ( 9'd384+9'd64),
+    .HB_START ( 9'd383+9'd64),
+    .HB_END   ( 9'd63       ),
+    .HCNT_END ( 9'd511      ),
+    .HS_START ( 9'd511-9'd16),
     .VB_END   ( 9'd271      ),  // 32 blank lines
     .VS_START ( 9'd260      )
 ) u_vtimer (
@@ -107,7 +107,6 @@ jtframe_vtimer #(
 jtpang_char u_char (
     .rst      ( rst         ),
     .clk      ( clk         ),
-    .clk24    ( clk24       ),
     .pxl_cen  ( pxl_cen     ),
 
     .h        ( h           ),
@@ -161,7 +160,6 @@ jtpang_obj u_obj (
 jtpang_colmix u_colmix (
     .rst      ( rst         ),
     .clk      ( clk         ),
-    .clk24    ( clk24       ),
 
     .pxl_cen  ( pxl_cen     ),
     .LHBL     ( LHBL        ),

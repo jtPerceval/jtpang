@@ -61,7 +61,7 @@ module jtpang_main(
     input               service,
     input               test,
     // NVRAM dump/restoration
-    input        [11:0] prog_addr,
+    input        [12:0] prog_addr,
     input        [ 7:0] prog_data,
     output       [ 7:0] prog_din,
     input               prog_we,
@@ -100,8 +100,6 @@ assign sys_dout  = { sdo, 3'b111, LVBL, 1'b1, test,
 assign cpu_addr = A[11:0];
 assign cpu_rnw  = wr_n;
 
-// TO DO
-assign sys_cs = 0;
 
 always @* begin
     rom_addr = { 6'd0, A[13:0] };
@@ -112,17 +110,18 @@ always @* begin
         else
             rom_addr[14] = A[14];
     end
-    ram_cs   = !mreq_n && rfsh_n && A[15:12]>=4'he;
     pal_cs   = !mreq_n && rfsh_n && A[15:12]==4'hc && !A[11];
     attr_cs  = !mreq_n && rfsh_n && A[15:12]==4'hc &&  A[11];
     vram_cs  = !mreq_n && rfsh_n && A[15:12]==4'hd;
+    ram_cs   = !mreq_n && rfsh_n && A[15:12]>=4'he;
     misc_cs  = !iorq_n && A[4:0]==0 && !wr_n;
     bank_cs  = !iorq_n && A[4:0]==2 && !wr_n;
     cab_cs   = !iorq_n && A[4:0]<3  && !rd_n;
     dma_go   = !iorq_n && A[4:0]==6;
     vbank_cs = !iorq_n && A[4:0]==7 && !wr_n;
-    fm_cs    = !iorq_n && A[4:1]==1;
-    pcm_cs   = !iorq_n && A[4:0]==5;
+    fm_cs    = !iorq_n && (A[4:0]==3 || A[4:0]==4);
+    pcm_cs   = !iorq_n && A[4:0]==5 && !wr_n;
+    sys_cs   = !iorq_n && A[4:0]==5 && !rd_n;
 end
 
 always @(posedge clk, posedge rst) begin
@@ -155,9 +154,9 @@ always @(posedge clk, posedge rst) begin
         end
         if( !iorq_n && !wr_n ) begin
             case( A[4:0] )
-                5'h08: scs  <= cpu_dout[0];
-                5'h10: sclk <= cpu_dout[0];
-                5'h18: sdi <= cpu_dout[0];
+                5'h08: scs  <= cpu_dout[7];
+                5'h10: sclk <= cpu_dout[7];
+                5'h18: sdi  <= cpu_dout[7];
                 default:;
             endcase
         end
@@ -200,7 +199,7 @@ jtframe_kabuki u_kabuki(
 
 `ifndef NOMAIN
 jtframe_sysz80_nvram #(
-    .RAM_AW     ( 12        ),
+    .RAM_AW     ( 13        ),
     .CLR_INT    ( 1         )
 ) u_cpu(
     .rst_n      ( ~rst      ),
@@ -225,7 +224,7 @@ jtframe_sysz80_nvram #(
     // NVRAM dump/restoration
     .prog_addr  ( prog_addr ),
     .prog_data  ( prog_data ),
-    .prog_din   ( prog_din  ),
+    .prog_din   ( nvram_dout),
     .prog_we    ( nvram_we  ),
     // ROM access
     .ram_cs     ( ram_cs    ),
@@ -257,7 +256,7 @@ jt9346 #(.DW(8),.AW(7)) u_eeprom(
     .scs        ( scs       ),  // chip select, active high. Goes low in between instructions
     // Dump access
     .dump_clk   ( clk       ),  // same as prom_we module
-    .dump_addr  ( prog_addr ),
+    .dump_addr  ( prog_addr[6:0] ),
     .dump_we    ( eeprom_we ),
     .dump_din   ( prog_din  ),
     .dump_dout  (eeprom_dout)

@@ -19,7 +19,6 @@
 module jtpang_colmix(
     input             rst,
     input             clk,
-    input             clk24,
 
     input             pxl_cen,
     input             LHBL,
@@ -68,7 +67,7 @@ end
 
 jtframe_dual_ram #(.aw(12)) u_dual_ram (
     // CPU
-    .clk0  ( clk24      ),
+    .clk0  ( clk        ),
     .data0 ( cpu_dout   ),
     .addr0 ( { cpu_addr[0], pal_bank, cpu_addr[10:1] } ),
     .we0   ( pal_we     ),

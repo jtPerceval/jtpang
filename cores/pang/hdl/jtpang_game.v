@@ -183,7 +183,7 @@ jtpang_main u_main(
     .test        ( dip_test     ),
 
     // NVRAM
-    .prog_addr   ( ioctl_addr[11:0] ),
+    .prog_addr   ( ioctl_addr[12:0] ),
     .prog_data   ( ioctl_dout   ),
     .prog_din    ( ioctl_din    ),
     .prog_we     ( ioctl_wr     ),
@@ -237,7 +237,7 @@ jtpang_snd u_snd(
 jtpang_video u_video(
     .rst        ( rst           ),
     .clk        ( clk           ),
-    .clk24      ( clk24         ),
+
     .pxl2_cen   ( pxl2_cen      ),
     .pxl_cen    ( pxl_cen       ),
     .int_n      ( int_n         ),
