@@ -95,7 +95,7 @@ reg  [31:0] pxl_data;
 reg         match, dr_start, dr_busy, buf_we,
             wait_ok;
 
-assign buf_data  = { cur_pal, pxl_data[31:28] };
+assign buf_data  = { cur_pal,  pxl_data[30], pxl_data[31], pxl_data[28], pxl_data[29] }; // pxl_data[31:28] };
 assign scan_addr = { obj_cnt, sub_cnt };
 
 always @* begin
