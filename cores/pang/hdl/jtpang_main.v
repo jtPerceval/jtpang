@@ -51,6 +51,7 @@ module jtpang_main(
     // sound
     output reg          fm_cs,
     output reg          pcm_cs,
+    output reg          pcm_bank,
     input         [7:0] fm_dout,
     input         [7:0] pcm_dout,
     // cabinet I/O
@@ -85,7 +86,6 @@ wire        m1_n, rd_n, wr_n, mreq_n, rfsh_n,
             iorq_n;
 reg         ram_cs, cab_cs, misc_cs, sys_cs,
             vbank_cs, bank_cs,
-            pcm_bank,
             scs, sclk, sdi; // EEPROM control signals
 wire        sdo;
 

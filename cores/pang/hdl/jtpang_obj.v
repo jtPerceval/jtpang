@@ -44,8 +44,31 @@ module jtpang_obj(
 
 reg  dma_go_l, dma_bsy;
 wire dma_we;
+// Line drawing, max 32 objects per line
+// 512 ticks in a line / 16 pixels per obj = 2^5 = 32
+// The original design must use an intermmediate
+// buffer like GnG, but having a faster clock, makes
+// it unnecessary.
+// Table objects = 2^(9-2)= 2^7
+reg         hs_l, scan_cen, scan_done;
+reg  [ 6:0] obj_cnt;
+reg  [ 4:0] drawn;
+reg  [ 3:0] dr_pxl;
+reg  [ 1:0] sub_cnt;
+reg  [ 8:0] dr_xpos, buf_addr;
+reg  [ 7:0] dr_ypos, ydiff;
+wire [ 7:0] scan_dout, buf_data;
+wire [ 8:0] hoffset, scan_addr;
+reg  [ 3:0] dr_pal, dr_vsub, cur_pal;
+reg  [10:0] dr_code;
+reg  [31:0] pxl_data;
+reg         match, dr_start, dr_busy, buf_we,
+            wait_ok;
 
-assign dma_we = dma_bsy & pxl_cen;
+assign buf_data  = { cur_pal, pxl_data[31:28] };
+assign scan_addr = { obj_cnt, sub_cnt };
+assign dma_we    = dma_bsy & pxl_cen;
+assign hoffset   = h - 9'd8;
 
 // DMA transfer
 always @(posedge clk, posedge rst) begin
@@ -74,32 +97,8 @@ always @(posedge clk, posedge rst) begin
     end
 end
 
-// Line drawing, max 32 objects per line
-// 512 ticks in a line / 16 pixels per obj = 2^5 = 32
-// The original design must use an intermmediate
-// buffer like GnG, but having a faster clock, makes
-// it unnecessary.
-// Table objects = 2^(9-2)= 2^7
-reg         hs_l, scan_cen, scan_done;
-reg  [ 6:0] obj_cnt;
-reg  [ 4:0] drawn;
-reg  [ 3:0] dr_pxl;
-reg  [ 1:0] sub_cnt;
-reg  [ 8:0] dr_xpos, buf_addr;
-reg  [ 7:0] dr_ypos, ydiff, buf_data;
-wire [ 7:0] scan_dout;
-wire [ 8:0] scan_addr;
-reg  [ 3:0] dr_pal, dr_vsub, cur_pal;
-reg  [10:0] dr_code;
-reg  [31:0] pxl_data;
-reg         match, dr_start, dr_busy, buf_we,
-            wait_ok;
-
-assign buf_data  = { cur_pal, pxl_data[31:28] };
-assign scan_addr = { obj_cnt, sub_cnt };
-
 always @* begin
-    ydiff = (vf+8'd2) - dr_ypos;
+    ydiff = (vf+8'd1) - dr_ypos;
     match = ydiff < 16;
 end
 
@@ -231,7 +230,7 @@ jtframe_obj_buffer #(
     .wr_data ( buf_data     ),
     .wr_addr ( buf_addr     ),
     .we      ( buf_we       ),
-    .rd_addr ( h            ),
+    .rd_addr ( hoffset      ),
     .rd      ( pxl_cen      ),
     .rd_data ( pxl          )
 );

@@ -84,10 +84,9 @@ localparam [24:0] BA1_START   = `PCM_START,
 /* verilator lint_on WIDTH */
 
 wire [21:0] pre_addr;
-wire        is_char, is_obj, prom_we, header;
+wire        is_obj, prom_we, header;
 
 assign dwnld_busy = downloading;
-assign is_char   = prog_ba==2;
 assign is_obj    = prog_ba==3 && !prom_we;
 assign kabuki_we = ioctl_wr && header && ioctl_addr[3:0]<11;
 

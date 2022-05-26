@@ -118,7 +118,7 @@ wire        main_cs, char_cs, obj_cs;
 wire [17:0] pcm_addr;
 wire [19:0] main_addr;
 wire [ 7:0] main_data, pcm_data;
-wire        main_ok, obj_ok, pcm_ok;
+wire        main_ok, obj_ok, pcm_ok, pcm_bank;
 
 assign { fm_cen, cpu_cen } = cen24[1:0];
 assign pcm_cen    = cen24[3];
@@ -167,6 +167,7 @@ jtpang_main u_main(
     // Sound
     .fm_cs       ( fm_cs        ),
     .pcm_cs      ( oki_cs       ),
+    .pcm_bank    ( pcm_bank     ),
     .fm_dout     ( fm_dout      ),
     .pcm_dout    ( pcm_dout     ),
 
