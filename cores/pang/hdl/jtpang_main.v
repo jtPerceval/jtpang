@@ -167,8 +167,8 @@ always @(posedge clk) begin
     case( A[1:0] )
         0: cab_dout <= { coin, service, 2'b11,
             start_button[0], 1'b1, start_button[1], 1'b1 };
-        1: cab_dout <= { joystick1[3:0], joystick1[5:4], 2'b11 };
-        2: cab_dout <= { joystick2[3:0], joystick2[5:4], 2'b11 };
+        1: cab_dout <= { joystick1[3:0], joystick1[4], joystick1[5], 2'b11 };
+        2: cab_dout <= { joystick2[3:0], joystick2[4], joystick2[5], 2'b11 };
         default:;
     endcase
     cpu_din <=

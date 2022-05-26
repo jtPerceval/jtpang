@@ -89,8 +89,8 @@ jtframe_vtimer #(
     .HS_START ( 9'd511-9'd16),
     .VB_START ( 9'hf7       ),
     .VB_END   ( 9'h07       ),  // 32 blank lines
-    .VCNT_END ( 9'd271      ),
-    .VS_START ( 9'd260      )
+    .VS_START ( 9'd263      ),
+    .VCNT_END ( 9'd271      )
 ) u_vtimer (
     .clk      ( clk         ),
     .pxl_cen  ( pxl_cen     ),

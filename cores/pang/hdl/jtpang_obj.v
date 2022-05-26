@@ -66,9 +66,9 @@ reg         match, dr_start, dr_busy, buf_we,
             wait_ok;
 
 assign buf_data  = { cur_pal, pxl_data[31:28] };
-assign scan_addr = { obj_cnt, sub_cnt };
+assign scan_addr = { ~obj_cnt, sub_cnt };
 assign dma_we    = dma_bsy & pxl_cen;
-assign hoffset   = h - 9'd8;
+assign hoffset   = h - 9'd10;
 
 // DMA transfer
 always @(posedge clk, posedge rst) begin
