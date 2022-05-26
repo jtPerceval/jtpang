@@ -56,7 +56,7 @@ always @(posedge clk) begin
         if( pxl_cen ) begin
             half <= 0;
             { red, green, blue } <= { nr, ng, nb };
-            pal_a <= obj_blank ? ch_pxl : { 3'h7, obj_pxl };
+            pal_a <= obj_blank ? ch_pxl : { 3'h0, obj_pxl };
         end
         if( half )
             { ng, nb } <= col_half;

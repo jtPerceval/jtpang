@@ -42,29 +42,32 @@ module jtpang_obj(
     output      [ 7:0] pxl
 );
 
-reg  dma_go_l, dma_we;
+reg  dma_go_l, dma_bsy;
+wire dma_we;
+
+assign dma_we = dma_bsy & pxl_cen;
 
 // DMA transfer
 always @(posedge clk, posedge rst) begin
     if( rst ) begin
         busrq    <= 0;
-        dma_we   <= 0;
+        dma_bsy   <= 0;
         dma_go_l <= 0;
         dma_addr <= 0;
     end else begin
         dma_go_l <= dma_go;
         if( dma_go & ~dma_go_l ) begin
             busrq    <= 1;
-            dma_we   <= 0;
+            dma_bsy   <= 0;
             dma_addr <= 0;
         end
         if( busrq && !busak_n && pxl_cen ) begin
-            dma_we <= 1;
-            if( dma_we ) begin
+            dma_bsy <= 1;
+            if( dma_bsy ) begin
                 dma_addr <=  dma_addr + 1'd1;
                 if( &dma_addr ) begin
                     busrq  <= 0;
-                    dma_we <= 0;
+                    dma_bsy <= 0;
                 end
             end
         end
@@ -79,18 +82,20 @@ end
 // Table objects = 2^(9-2)= 2^7
 reg         hs_l, scan_cen, scan_done;
 reg  [ 6:0] obj_cnt;
-reg  [ 4:0] drawn, dr_pxl;
+reg  [ 4:0] drawn;
+reg  [ 3:0] dr_pxl;
 reg  [ 1:0] sub_cnt;
 reg  [ 8:0] dr_xpos, buf_addr;
-reg  [ 7:0] dr_ypos, ypos, ydiff, buf_data;
+reg  [ 7:0] dr_ypos, ydiff, buf_data;
 wire [ 7:0] scan_dout;
 wire [ 8:0] scan_addr;
 reg  [ 3:0] dr_pal, dr_vsub, cur_pal;
 reg  [10:0] dr_code;
 reg  [31:0] pxl_data;
-reg         match, dr_start, dr_busy, buf_we;
+reg         match, dr_start, dr_busy, buf_we,
+            wait_ok;
 
-assign buf_data  = { cur_pal, pxl_data[3:0] };
+assign buf_data  = { cur_pal, pxl_data[31:28] };
 assign scan_addr = { obj_cnt, sub_cnt };
 
 always @* begin
@@ -114,36 +119,38 @@ always @(posedge clk, posedge rst) begin
     end else begin
         hs_l     <= hs;
         scan_cen <= ~scan_cen;
-        dr_start <= 0;
         if( !hs && hs_l ) begin
             obj_cnt   <= 0;
             sub_cnt   <= 0;
             drawn     <= 0;
             scan_done <= 0;
         end
-        if( !scan_done && scan_cen ) begin
-            if( sub_cnt!=3 ) sub_cnt <= sub_cnt + 1'd1;
-            case( sub_cnt )
-                0: dr_code[7:0] <= scan_dout;
-                1: begin
-                    dr_code[10:8] <= scan_dout[7:5];
-                    dr_xpos[8]    <= scan_dout[4];
-                    dr_pal        <= scan_dout[3:0];
-                end
-                2: dr_ypos <= scan_dout;
-                3: begin
-                    dr_xpos[7:0] <= scan_dout;
-                    dr_vsub <= ydiff[3:0] ^ {4{flip}};
-                    if( !match || !dr_busy ) begin
-                        { scan_done, obj_cnt, sub_cnt } <= { 1'b0, obj_cnt, sub_cnt } + 1'd1;
-                        if( match ) begin
-                            dr_start <= 1;
-                            drawn    <= drawn + 5'd1;
-                            if( drawn==31 ) scan_done <= 1;
+        if( scan_cen ) begin
+            dr_start <= 0;
+            if( !dr_start && !scan_done ) begin
+                if( sub_cnt!=3 ) sub_cnt <= sub_cnt + 1'd1;
+                case( sub_cnt )
+                    0: dr_code[7:0] <= scan_dout;
+                    1: begin
+                        dr_code[10:8] <= scan_dout[7:5];
+                        dr_xpos[8]    <= scan_dout[4];
+                        dr_pal        <= scan_dout[3:0];
+                    end
+                    2: dr_ypos <= scan_dout;
+                    3: begin
+                        dr_xpos[7:0] <= scan_dout;
+                        dr_vsub <= ydiff[3:0] ^ {4{flip}};
+                        if( !match || !dr_busy ) begin
+                            { scan_done, obj_cnt, sub_cnt } <= { 1'b0, obj_cnt, sub_cnt } + 1'd1;
+                            if( match ) begin
+                                dr_start <= 1;
+                                drawn    <= drawn + 5'd1;
+                                if( drawn==31 ) scan_done <= 1;
+                            end
                         end
                     end
-                end
-            endcase
+                endcase
+            end
         end
     end
 end
@@ -153,20 +160,38 @@ always @(posedge clk, posedge rst) begin
         dr_busy  <= 0;
         cur_pal  <= 0;
         pxl_data <= 0;
+        rom_cs   <= 0;
+        rom_addr <= 0;
+        dr_pxl   <= 0;
+        buf_addr <= 0;
+        wait_ok  <= 0;
     end else begin
+        if( !hs && hs_l ) dr_busy <= 0;
         if( dr_busy ) begin
-            if( rom_ok && dr_pxl[3:0]==0 ) begin
-                pxl_data    <= rom_data;
+            if( wait_ok && rom_ok && dr_pxl[2:0]==0 ) begin
+                pxl_data <= {
+                    rom_data[15], rom_data[11], rom_data[ 7], rom_data[ 3],
+                    rom_data[14], rom_data[10], rom_data[ 6], rom_data[ 2],
+                    rom_data[13], rom_data[ 9], rom_data[ 5], rom_data[ 1],
+                    rom_data[12], rom_data[ 8], rom_data[ 4], rom_data[ 0],
+                    rom_data[31], rom_data[27], rom_data[23], rom_data[19],
+                    rom_data[30], rom_data[26], rom_data[22], rom_data[18],
+                    rom_data[29], rom_data[25], rom_data[21], rom_data[17],
+                    rom_data[28], rom_data[24], rom_data[20], rom_data[16]
+                };
                 rom_addr[1] <= 1;
                 buf_we      <= 1;
-            end else begin
-                pxl_data <= pxl_data >> 4;
+                wait_ok     <= 0;
+                if( dr_pxl[3] ) rom_cs <= 0;
+            end else if(!wait_ok) begin
+                pxl_data <= pxl_data << 4;
                 buf_addr <= buf_addr + 9'd1;
                 dr_pxl   <= dr_pxl + 4'd1;
-                if( dr_pxl[3:0]==0 ) begin
+                if( dr_pxl[2:0]==7 ) begin
                     buf_we <= 0;
-                    dr_busy <= !dr_pxl[4];
+                    dr_busy <= !dr_pxl[3];
                 end
+                wait_ok <= dr_pxl==7;
             end
         end else if( dr_start ) begin
             dr_busy  <= 1;
@@ -176,6 +201,7 @@ always @(posedge clk, posedge rst) begin
             buf_addr <= dr_xpos;
             buf_we   <= 0;
             cur_pal  <= dr_pal;
+            wait_ok  <= 1;
         end
     end
 end
