@@ -195,8 +195,7 @@ jtframe_rom_1slot #(
 // Bank 3: objects
 jtframe_rom_1slot #(
     .SLOT0_DW   (  32        ),
-    .SLOT0_AW   (  17        ),
-    .SLOT0_OKLATCH(  0       )
+    .SLOT0_AW   (  17        )
 ) u_bank3(
     .rst        ( rst        ),
     .clk        ( clk        ),
