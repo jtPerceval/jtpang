@@ -50,7 +50,7 @@ assign obj_blank = &obj_pxl[3:0];
 
 always @(posedge clk) begin
     half <= ~half;
-    if( !LVBL ) begin
+    if( !LVBL && !LHBL ) begin
         { red, green, blue } <= 0;
     end else begin
         if( pxl_cen ) begin

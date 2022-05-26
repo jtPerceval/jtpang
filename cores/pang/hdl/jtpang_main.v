@@ -206,7 +206,7 @@ jtframe_sysz80_nvram #(
     .clk        ( clk       ),
     .cen        ( cpu_cen   ),
     .cpu_cen    (           ),
-    .int_n      ( int_n     ),
+    .int_n      ( int_n | ~dip_pause    ),
     .nmi_n      ( 1'b1      ),
     .busrq_n    ( busrq_n   ),
     .m1_n       ( m1_n      ),
