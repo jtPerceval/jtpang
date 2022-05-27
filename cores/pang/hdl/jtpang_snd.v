@@ -16,8 +16,6 @@
     Version: 1.0
     Date: 21-5-2022 */
 
-/* verilator tracing_off */
-
 module jtpang_snd(
     input              clk,
     input              rst,
@@ -54,6 +52,11 @@ localparam [7:0] FM_GAIN  = 8'h10,
 
 wire signed [15:0] fm_snd;
 wire signed [13:0] pcm_snd;
+wire               pcm_wrn;
+
+assign pcm_wrn = wr_n | ~pcm_cs;
+
+/* verilator tracing_off */
 
 jtopll u_topll (
     .rst   ( rst        ),
@@ -67,13 +70,14 @@ jtopll u_topll (
     .snd   ( fm_snd     ),
     .sample( sample     )
 );
+/* verilator tracing_on */
 
 jt6295 #(.INTERPOL(0)) u_pcm (
     .rst     ( rst      ),
     .clk     ( clk      ),
     .cen     ( pcm_cen  ),
     .ss      ( 1'b1     ),
-    .wrn     ( wr_n     ),
+    .wrn     ( pcm_wrn  ),
     .din     ( cpu_dout ),
     .dout    ( pcm_dout ),
     .rom_addr( rom_addr ),
@@ -101,4 +105,3 @@ jtframe_mixer #(.W1(14)) u_mixer(
 
 endmodule
 
-/* verilator tracing_on */

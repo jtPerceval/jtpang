@@ -132,11 +132,11 @@ always @(posedge clk, posedge rst) begin
         obj_en    <= 1;
         video_enb <= 0;
         vram_msb  <= 0;
-        scs <= 0;
-        sclk<= 0;
-        sdi<= 0;
+        scs       <= 0;
+        sclk      <= 0;
+        sdi       <= 0;
     end else begin
-        if( bank_cs ) bank <= cpu_dout[3:0];
+        if( bank_cs ) bank     <= cpu_dout[3:0];
         if( vbank_cs) vram_msb <= cpu_dout[0];
         if( misc_cs ) begin
             // chip 11D takes bits 0,1,2,5
@@ -178,7 +178,6 @@ always @(posedge clk) begin
         attr_cs ? attr_dout :
         vram_cs ? vram_dout :
         fm_cs   ? fm_dout   :
-        pcm_cs  ? pcm_dout  :
         sys_cs  ? sys_dout  :
         cab_cs  ? cab_dout  : 8'hff;
 end
@@ -206,7 +205,7 @@ jtframe_sysz80_nvram #(
     .clk        ( clk       ),
     .cen        ( cpu_cen   ),
     .cpu_cen    (           ),
-    .int_n      ( int_n | ~dip_pause    ),
+    .int_n      ( int_n | ~dip_pause ),
     .nmi_n      ( 1'b1      ),
     .busrq_n    ( busrq_n   ),
     .m1_n       ( m1_n      ),
