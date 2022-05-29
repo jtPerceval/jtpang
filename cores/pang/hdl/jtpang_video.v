@@ -28,6 +28,7 @@ module jtpang_video(
     output          VS,
     input           flip,
     output          int_n,
+    input           video_enb,
 
     // CPU interface
     input           pal_bank,
@@ -166,6 +167,7 @@ jtpang_colmix u_colmix (
     .pxl_cen  ( pxl_cen     ),
     .LHBL     ( LHBL        ),
     .LVBL     ( LVBL        ),
+    .video_enb( video_enb   ),
 
     .obj_pxl  ( obj_pxl     ),
     .ch_pxl   ( char_pxl    ),

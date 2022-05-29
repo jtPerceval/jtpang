@@ -245,6 +245,7 @@ jtpang_video u_video(
     .HS         ( HS            ),
     .VS         ( VS            ),
     .flip       ( dip_flip      ),
+    .video_enb  ( video_enb     ),
 
     .pal_bank   ( pal_bank      ),
     .pal_cs     ( pal_cs        ),

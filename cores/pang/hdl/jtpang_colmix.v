@@ -23,6 +23,7 @@ module jtpang_colmix(
     input             pxl_cen,
     input             LHBL,
     input             LVBL,
+    input             video_enb,
 
     input      [ 7:0] obj_pxl,
     input      [10:0] ch_pxl,
@@ -50,7 +51,7 @@ assign obj_blank = &obj_pxl[3:0];
 
 always @(posedge clk) begin
     half <= ~half;
-    if( !LVBL && !LHBL ) begin
+    if( (!LVBL && !LHBL) || video_enb ) begin
         { red, green, blue } <= 0;
     end else begin
         if( pxl_cen ) begin

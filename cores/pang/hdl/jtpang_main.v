@@ -84,7 +84,7 @@ wire        nvram_we, eeprom_we;
 wire        m1_n, rd_n, wr_n, mreq_n, rfsh_n,
             iorq_n;
 reg         ram_cs, cab_cs, misc_cs, sys_cs,
-            vbank_cs, bank_cs,
+            vbank_cs, bank_cs, LVBL_l, video_enq,
             scs, sclk, sdi; // EEPROM control signals
 wire        sdo;
 
@@ -93,9 +93,7 @@ assign nvram_we  = prog_ram & prog_we & !prog_addr[12];
 assign eeprom_we = prog_ram & prog_we & prog_addr[12];
 assign prog_din  = prog_addr[12] ? eeprom_dout : nvram_dout;
 
-assign sys_dout  = { sdo, 3'b111, ~video_enb, 1'b1, test,
-            LVBL };
-            // it was caused by LVBL or not
+assign sys_dout  = { sdo, 3'b111, video_enq, 1'b1, test, LVBL };
 assign cpu_addr = A[11:0];
 assign cpu_rnw  = wr_n;
 
@@ -118,7 +116,7 @@ always @* begin
     cab_cs   = !iorq_n && A[4:0]<3  && !rd_n;
     dma_go   = !iorq_n && A[4:0]==6;
     vbank_cs = !iorq_n && A[4:0]==7 && !wr_n;
-    fm_cs    = !iorq_n && (A[4:0]==3 || A[4:0]==4);
+    fm_cs    = !iorq_n && (A[4:0]==3 || A[4:0]==4) && !wr_n;
     pcm_cs   = !iorq_n && A[4:0]==5 && !wr_n;
     sys_cs   = !iorq_n && A[4:0]==5 && !rd_n;
 end
@@ -130,11 +128,15 @@ always @(posedge clk, posedge rst) begin
         char_en   <= 1;
         obj_en    <= 1;
         video_enb <= 0;
+        video_enq <= 0;
         vram_msb  <= 0;
         scs       <= 0;
         sclk      <= 0;
         sdi       <= 0;
+        LVBL_l    <= 0;
     end else begin
+        LVBL_l <= LVBL;
+        if( LVBL && !LVBL_l ) video_enq <= ~video_enb;
         if( bank_cs ) bank     <= cpu_dout[3:0];
         if( vbank_cs) vram_msb <= cpu_dout[0];
         if( misc_cs ) begin
