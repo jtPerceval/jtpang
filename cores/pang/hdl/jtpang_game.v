@@ -99,7 +99,7 @@ wire [ 3:0] cen24;
 wire        pcm_cen, fm_cen, cpu_cen;
 
 // CPU bus
-wire [ 7:0] cpu_dout, pcm_dout, fm_dout,
+wire [ 7:0] cpu_dout, pcm_dout,
             vram_dout, attr_dout, pal_dout;
 wire        fm_cs, oki_cs,
             cpu_rnw, busrq, int_n,
@@ -168,7 +168,6 @@ jtpang_main u_main(
     .fm_cs       ( fm_cs        ),
     .pcm_cs      ( oki_cs       ),
     .pcm_bank    ( pcm_bank     ),
-    .fm_dout     ( fm_dout      ),
     .pcm_dout    ( pcm_dout     ),
 
     // DMA
@@ -210,7 +209,6 @@ jtpang_snd u_snd(
     .cpu_dout   ( cpu_dout      ),
     .wr_n       ( cpu_rnw       ),
     .a0         ( cpu_addr[0]   ),
-    .fm_dout    ( fm_dout       ),
     .fm_cs      ( fm_cs         ),
     .pcm_dout   ( pcm_dout      ),
     .pcm_cs     ( oki_cs        ),
@@ -232,7 +230,6 @@ jtpang_snd u_snd(
     assign game_led = 0;
     assign snd      = 0;
     assign pcm_dout = 0;
-    assign fm_dout  = 0;
 `endif
 
 jtpang_video u_video(

@@ -52,7 +52,6 @@ module jtpang_main(
     output reg          fm_cs,
     output reg          pcm_cs,
     output reg          pcm_bank,
-    input         [7:0] fm_dout,
     input         [7:0] pcm_dout,
     // cabinet I/O
     input         [5:0] joystick1,
@@ -177,7 +176,6 @@ always @(posedge clk) begin
         pal_cs  ? pal_dout  :
         attr_cs ? attr_dout :
         vram_cs ? vram_dout :
-        fm_cs   ? fm_dout   :
         sys_cs  ? sys_dout  :
         cab_cs  ? cab_dout  : 8'hff;
 end

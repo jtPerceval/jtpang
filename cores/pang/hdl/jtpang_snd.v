@@ -27,7 +27,6 @@ module jtpang_snd(
     input              wr_n,
 
     input              a0,
-    output       [7:0] fm_dout,
     input              fm_cs,
 
     output       [7:0] pcm_dout,
@@ -48,7 +47,7 @@ module jtpang_snd(
 );
 
 localparam [7:0] FM_GAIN  = 8'h10,
-                 PCM_GAIN = 8'h03;
+                 PCM_GAIN = 8'h08;
 
 wire signed [15:0] fm_snd;
 wire signed [13:0] pcm_snd;
@@ -58,7 +57,7 @@ assign pcm_wrn = wr_n | ~pcm_cs;
 
 /* verilator tracing_off */
 
-jtopll u_topll (
+jt2413 u_jt2413 (
     .rst   ( rst        ),
     .clk   ( clk        ),
     .cen   ( fm_cen     ),
@@ -66,7 +65,6 @@ jtopll u_topll (
     .addr  ( a0         ),
     .cs_n  ( ~fm_cs     ),
     .wr_n  ( wr_n       ),
-    .dout  ( fm_dout    ),
     .snd   ( fm_snd     ),
     .sample( sample     )
 );
