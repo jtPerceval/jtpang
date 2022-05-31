@@ -65,6 +65,8 @@ module jtpang_video(
     input    [3:0]  gfx_en
 );
 
+localparam [8:0] HOFFSET = 9'd10;
+
 wire [ 7:0] obj_pxl;
 wire [10:0] char_pxl;
 wire [ 7:0] vf;
@@ -72,7 +74,7 @@ wire [ 8:0] dma_addr, v, h, hf;
 
 assign vf    = v[7:0]^{8{flip}};
 assign hf    = h^{9{flip}};
-assign int_n = !( !LVBL || v[6:5]!=2'b11 );
+assign int_n = !( (!LVBL && v>9'hf8) || v[6:5]!=2'b11 );
 
 // Video uses the 48 MHz clock
 jtframe_frac_cen #( .W( 2), .WC( 4)) u_cen48(
@@ -84,8 +86,8 @@ jtframe_frac_cen #( .W( 2), .WC( 4)) u_cen48(
 );
 
 jtframe_vtimer #(
-    .HB_START ( 9'd383+9'd64),
-    .HB_END   ( 9'd63       ),
+    .HB_START ( 9'd383+9'd64+HOFFSET ),
+    .HB_END   ( 9'd63+HOFFSET        ),
     .HCNT_END ( 9'd511      ),
     .HS_START ( 9'd511-9'd16),
     .VB_START ( 9'hf7       ),

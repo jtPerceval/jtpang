@@ -126,7 +126,7 @@ assign pcm_cen    = cen24[3];
 assign ba_wr      = 0;
 assign ba0_din    = 0;
 assign ba0_din_m  = 0;
-assign debug_view = 0;
+assign debug_view = {7'd0,video_enb};
 
 // The sound uses the 24 MHz clock
 jtframe_frac_cen #( .W( 4), .WC( 4)) u_cen24(
@@ -149,6 +149,7 @@ jtpang_main u_main(
 
     .flip        ( dip_flip     ),
     .LVBL        ( LVBL         ),
+    .LHBL        ( LHBL         ),
     .dip_pause   ( dip_pause    ),
 
     .char_en     ( char_en      ),
@@ -192,6 +193,7 @@ jtpang_main u_main(
     .kabuki_we   ( kabuki_we    ),
     .kabuki_en   ( kabuki_en    ),
 
+    .debug_bus   ( debug_bus    ),
     // ROM
     .rom_addr    ( main_addr    ),
     .rom_cs      ( main_cs      ),

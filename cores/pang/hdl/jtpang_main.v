@@ -30,6 +30,7 @@ module jtpang_main(
     // Video configuration
     output reg          flip,
     input               LVBL,
+    input               LHBL,
     input               dip_pause,
     output reg          char_en,
     output reg          obj_en,
@@ -69,6 +70,7 @@ module jtpang_main(
     // Kabuki
     input               kabuki_we,
     input               kabuki_en,
+    input       [7:0]   debug_bus,
     // ROM access
     output reg   [19:0] rom_addr,
     output reg          rom_cs,
@@ -83,9 +85,9 @@ reg  [ 7:0] cpu_din, cab_dout;
 //wire        nvram_we,
 reg         eeprom_we;
 wire        m1_n, rd_n, wr_n, mreq_n, rfsh_n,
-            iorq_n;
+            iorq_n, LHVBLK;
 reg         ram_cs, cab_cs, misc_cs, sys_cs,
-            vbank_cs, bank_cs, LVBL_l, video_enq,
+            vbank_cs, bank_cs, LHVBLK_l, video_enq,
             scs, sclk, sdi; // EEPROM control signals
 wire        sdo_raw;
 reg         sdo, sclk_l;
@@ -128,6 +130,8 @@ always @* begin
     sys_cs   = !iorq_n && A[4:0]==5 && !rd_n;
 end
 
+assign LHVBLK = LHBL | LVBL;
+
 always @(posedge clk, posedge rst) begin
     if( rst ) begin
         bank      <= 0;
@@ -140,10 +144,10 @@ always @(posedge clk, posedge rst) begin
         scs       <= 0;
         sclk      <= 0;
         sdi       <= 0;
-        LVBL_l    <= 0;
+        LHVBLK_l  <= 0;
     end else begin
-        LVBL_l <= LVBL;
-        if( LVBL && !LVBL_l ) video_enq <= ~video_enb;
+        LHVBLK_l <= LHVBLK;
+        if( LHVBLK && !LHVBLK_l ) video_enq <= ~video_enb;
         if( bank_cs ) bank     <= cpu_dout[3:0];
         if( vbank_cs) vram_msb <= cpu_dout[0];
         if( misc_cs ) begin
@@ -157,7 +161,7 @@ always @(posedge clk, posedge rst) begin
             video_enb <= cpu_dout[3]; // PALENB
             pcm_bank  <= cpu_dout[4];
             pal_bank  <= cpu_dout[5];
-            char_en   <= cpu_dout[6];
+            char_en   <= cpu_dout[6]; // can act as CHAR bank selection too
             obj_en    <= cpu_dout[7];
         end
         if( !iorq_n && !wr_n ) begin
@@ -277,7 +281,7 @@ jt9346 #(.DW(16),.AW(6)) u_eeprom(
     // Dump access
     .dump_clk   ( clk       ),  // same as prom_we module
     .dump_addr  ( prog_addr[6:1] ),
-    .dump_we    ( eeprom_we & prog_addr[0] ),
+    .dump_we    ( eeprom_we     ),
     .dump_din   ( dump_din      ),
     .dump_dout  ( eeprom_dout   )
 );
