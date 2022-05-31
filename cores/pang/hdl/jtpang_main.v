@@ -76,27 +76,34 @@ module jtpang_main(
     input               rom_ok
 );
 
-wire [ 7:0] dec_dout, sys_dout, ram_dout, nvram_dout, eeprom_dout;
-wire [15:0] A;
+wire [ 7:0] dec_dout, sys_dout, ram_dout, nvram_dout;
+wire [15:0] A, eeprom_dout;
 reg  [ 3:0] bank;
 reg  [ 7:0] cpu_din, cab_dout;
-wire        nvram_we, eeprom_we;
+//wire        nvram_we,
+reg         eeprom_we;
 wire        m1_n, rd_n, wr_n, mreq_n, rfsh_n,
             iorq_n;
 reg         ram_cs, cab_cs, misc_cs, sys_cs,
             vbank_cs, bank_cs, LVBL_l, video_enq,
             scs, sclk, sdi; // EEPROM control signals
-wire        sdo;
+wire        sdo_raw;
+reg         sdo, sclk_l;
 
 // NVRAM & EEPROM can be dumped to the SD card
-assign nvram_we  = prog_ram & prog_we & !prog_addr[12];
-assign eeprom_we = prog_ram & prog_we & prog_addr[12];
-assign prog_din  = prog_addr[12] ? eeprom_dout : nvram_dout;
+//assign nvram_we  = prog_ram & prog_we & !prog_addr[12];
+//assign eeprom_we = prog_ram & prog_we; // & prog_addr[12];
+assign prog_din  =  // !prog_addr[12] ? nvram_dout :
+                    !prog_addr[ 0] ? eeprom_dout[7:0] : eeprom_dout[15:8];
 
 assign sys_dout  = { sdo, 3'b111, video_enq, 1'b1, test, LVBL };
 assign cpu_addr = A[11:0];
 assign cpu_rnw  = wr_n;
 
+always @(posedge clk) begin
+    sclk_l <= sclk;
+    if( !sclk && sclk_l ) sdo <= sdo_raw;
+end
 
 always @* begin
     rom_addr = { 6'd0, A[13:0] };
@@ -224,7 +231,7 @@ jtframe_sysz80_nvram #(
     .prog_addr  ( prog_addr ),
     .prog_data  ( prog_data ),
     .prog_din   ( nvram_dout),
-    .prog_we    ( nvram_we  ),
+    .prog_we    ( 1'b0      ),
     // ROM access
     .ram_cs     ( ram_cs    ),
     .rom_cs     ( rom_cs    ),
@@ -245,20 +252,34 @@ jtframe_sysz80_nvram #(
 `endif
 
 // 128 bytes
-jt9346 #(.DW(8),.AW(7)) u_eeprom(
+reg  [15:0] dump_din;
+
+always @(posedge clk) begin
+    eeprom_we <= 0;
+    if (prog_we && prog_ram) begin
+        eeprom_we <= 1;
+        if(prog_addr[0]) begin
+            dump_din[15:8] <= prog_data;
+        end else begin
+            dump_din[7:0] <= prog_data;
+        end
+    end
+end
+
+jt9346 #(.DW(16),.AW(6)) u_eeprom(
     .rst        ( rst       ),  // system reset
     .clk        ( clk       ),  // system clock
     // chip interface
     .sclk       ( sclk      ),  // serial clock
     .sdi        ( sdi       ),  // serial data in
-    .sdo        ( sdo       ),  // serial data out and ready/not busy signal
+    .sdo        ( sdo_raw   ),  // serial data out and ready/not busy signal
     .scs        ( scs       ),  // chip select, active high. Goes low in between instructions
     // Dump access
     .dump_clk   ( clk       ),  // same as prom_we module
-    .dump_addr  ( prog_addr[6:0] ),
-    .dump_we    ( eeprom_we ),
-    .dump_din   ( prog_din  ),
-    .dump_dout  (eeprom_dout)
+    .dump_addr  ( prog_addr[6:1] ),
+    .dump_we    ( eeprom_we & prog_addr[0] ),
+    .dump_din   ( dump_din      ),
+    .dump_dout  ( eeprom_dout   )
 );
 
 endmodule

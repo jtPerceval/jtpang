@@ -322,6 +322,7 @@ jtpang_sdram u_sdram(
     .ioctl_addr ( ioctl_addr    ),
     .ioctl_dout ( ioctl_dout    ),
     .ioctl_wr   ( ioctl_wr      ),
+    .ioctl_ram  ( ioctl_ram     ),
 
     .prog_addr  ( prog_addr     ),
     .prog_data  ( prog_data     ),

@@ -66,6 +66,7 @@ module jtpang_sdram(
     input    [24:0]  ioctl_addr,
     input    [ 7:0]  ioctl_dout,
     input            ioctl_wr,
+    input            ioctl_ram,
     output reg [21:0] prog_addr,
     output    [15:0] prog_data,
     output    [ 1:0] prog_mask,
@@ -85,10 +86,12 @@ localparam [24:0] BA1_START   = `PCM_START,
 
 wire [21:0] pre_addr;
 wire        is_obj, prom_we, header;
+wire        dwn_wr;
 
+assign dwn_wr    = ioctl_wr & ~ioctl_ram;
 assign dwnld_busy = downloading;
 assign is_obj    = prog_ba==3 && !prom_we;
-assign kabuki_we = ioctl_wr && header && ioctl_addr[3:0]<11;
+assign kabuki_we = dwn_wr && header && ioctl_addr[3:0]<11;
 
 always @(posedge clk) begin
     if( kabuki_we && ioctl_addr[3:0]==0 )
@@ -113,7 +116,7 @@ jtframe_dwnld #(
     .downloading  ( downloading    ),
     .ioctl_addr   ( ioctl_addr     ),
     .ioctl_dout   ( ioctl_dout     ),
-    .ioctl_wr     ( ioctl_wr       ),
+    .ioctl_wr     ( dwn_wr         ),
     .prog_addr    ( pre_addr       ),
     .prog_data    ( prog_data      ),
     .prog_mask    ( prog_mask      ), // active low
