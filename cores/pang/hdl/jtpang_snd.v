@@ -55,7 +55,6 @@ wire               pcm_wrn;
 
 assign pcm_wrn = wr_n | ~pcm_cs;
 
-/* verilator tracing_off */
 
 jt2413 u_jt2413 (
     .rst   ( rst        ),
@@ -68,7 +67,7 @@ jt2413 u_jt2413 (
     .snd   ( fm_snd     ),
     .sample( sample     )
 );
-/* verilator tracing_on */
+/* verilator tracing_off */
 
 jt6295 #(.INTERPOL(0)) u_pcm (
     .rst     ( rst      ),
@@ -101,5 +100,6 @@ jtframe_mixer #(.W1(14)) u_mixer(
     .peak ( peak        )
 );
 
+/* verilator tracing_on */
 endmodule
 
