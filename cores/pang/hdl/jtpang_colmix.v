@@ -51,7 +51,7 @@ assign obj_blank = &obj_pxl[3:0];
 
 always @(posedge clk) begin
     half <= ~half;
-    if( (!LVBL && !LHBL) || video_enb ) begin
+    if( (!LVBL || !LHBL) || video_enb ) begin
         { red, green, blue } <= 0;
     end else begin
         if( pxl_cen ) begin

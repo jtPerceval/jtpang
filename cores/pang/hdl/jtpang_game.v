@@ -233,7 +233,7 @@ jtpang_snd u_snd(
     assign snd      = 0;
     assign pcm_dout = 0;
 `endif
-/* verilator tracing_off */
+
 jtpang_video u_video(
     .rst        ( rst           ),
     .clk        ( clk           ),
@@ -279,7 +279,7 @@ jtpang_video u_video(
     .blue       ( blue          ),
     .gfx_en     ( gfx_en        )
 );
-
+/* verilator tracing_off */
 jtpang_sdram u_sdram(
     .rst        ( rst           ),
     .clk        ( clk           ),
