@@ -9,16 +9,14 @@ cworld
 # Control problems
 pkladies
 maguken2
-marukin
-
-# GFX problems (mapping)
-#qtono1
 
 #bad background on title screen
 #block
 
 #wrong obj shown
 #hatena
+#marukin
+#spang
 
 #spang
 
@@ -26,4 +24,4 @@ marukin
 #dokaben2
 
 # Not booting
-#spang
+#qtono1

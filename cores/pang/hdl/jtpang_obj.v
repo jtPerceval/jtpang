@@ -119,7 +119,7 @@ always @(posedge clk, posedge rst) begin
         hs_l     <= hs;
         scan_cen <= ~scan_cen;
         if( !hs && hs_l ) begin
-            obj_cnt   <= 0;
+            obj_cnt   <= 1;
             sub_cnt   <= 0;
             drawn     <= 0;
             scan_done <= 0;
