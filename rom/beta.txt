@@ -1,12 +1,12 @@
 pang
 bbros
 pompingw
+pkladies
 # Japanese
 dokaben
 
 # GFX problems (mapping)
 #maguken2
-#pkladies
 #cworld
 #qtono1
 #marukin

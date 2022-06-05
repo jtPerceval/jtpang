@@ -110,7 +110,7 @@ wire        char_en, obj_en, video_enb, pal_bank;
 wire        dma_go, busak_n, busrq_n;
 
 // SDRAM
-wire [17:0] char_addr;
+wire [19:0] char_addr;
 wire [31:0] char_data;
 wire [16:0] obj_addr;
 wire [31:0] obj_data;

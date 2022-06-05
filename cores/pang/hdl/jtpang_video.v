@@ -49,7 +49,7 @@ module jtpang_video(
     output          busrq,
 
     // ROM
-    output   [17:0] char_addr,
+    output   [19:0] char_addr,
     input    [31:0] char_data,
     output          char_cs,
 

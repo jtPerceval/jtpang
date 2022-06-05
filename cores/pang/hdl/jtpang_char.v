@@ -40,7 +40,7 @@ module jtpang_char(
     input      [ 8:0] dma_addr,
     input             busak_n,
 
-    output reg [17:0] rom_addr,
+    output reg [19:0] rom_addr,
     input      [31:0] rom_data,
     output            rom_cs,
 
@@ -68,7 +68,7 @@ always @(posedge clk, posedge rst) begin
         case( { hf[2:1], h[0] } )
             0: code_lsb <= code_dout;
             1: begin
-                rom_addr <= { code_dout[5:0], code_lsb, vf[2:0], 1'b0 };
+                rom_addr <= { code_dout, code_lsb, vf[2:0], 1'b0 };
                 { nx_hflip, nx_pal } <= scan_dout;
             end
         endcase

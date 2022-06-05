@@ -35,7 +35,7 @@ module jtpang_sdram(
     // Char layer
     input            char_cs,
     output           char_ok,
-    input    [17:0]  char_addr,
+    input    [19:0]  char_addr,
     output   [31:0]  char_data,
 
     // Obj
@@ -175,7 +175,7 @@ jtframe_rom_1slot #(
 // Bank 2: Char layer
 jtframe_rom_1slot #(
     .SLOT0_DW   (         32 ), // Tiles
-    .SLOT0_AW   (         18 )
+    .SLOT0_AW   (         20 )
 ) u_bank2(
     .rst        ( rst        ),
     .clk        ( clk        ),
