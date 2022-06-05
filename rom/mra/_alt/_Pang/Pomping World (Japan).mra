@@ -34,8 +34,8 @@
     <mraauthor>jotego</mraauthor>
     <rom index="0" zip="pompingw.zip|pang.zip" md5="None">
         <part>
-            00 00 00 00 00 00 00 00
-            00 00 00 00 00 00 00 00
+            01 23 45 67 76 54 32 10
+            65 48 24 00 00 00 00 00
         </part>
         <!-- maincpu - starts at 0x0 -->
         <part name="pwj_06.11h" crc="4a0a6426"/>

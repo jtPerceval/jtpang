@@ -22,7 +22,25 @@ name="jtpang"
 [header]
 len=16
 data = [
-    { machine="pang", Pointer=0, data="01 23 45 67 76 54 32 10 65 48 24" }
+    { machine="cworld",   Pointer=0, data="04 15 26 37 40 51 62 73 57 51 43" },
+    { machine="pang",     Pointer=0, data="01 23 45 67 76 54 32 10 65 48 24" },
+    { machine="hatena",   Pointer=0, data="45 67 01 23 45 67 01 23 57 51 43" },
+    { machine="spang",    Pointer=0, data="45 67 01 23 45 67 01 23 58 52 43" },
+    # keep these two below spang
+    { setname="spangj",   Pointer=0, data="45 12 36 70 67 01 23 45 55 aa 5a" },
+    { setname="sbbros",   Pointer=0, data="45 67 01 23 45 67 01 23 21 30 12" },
+
+
+    { machine="dokaben",  Pointer=0, data="76 54 32 10 01 23 45 67 aa 55 a5" },
+    { machine="dokaben2", Pointer=0, data="76 54 32 10 01 23 45 67 aa 55 a5" },
+    { machine="pkladies", Pointer=0, data="76 54 32 10 01 23 45 67 aa 55 a5" },
+    { machine="marukin",  Pointer=0, data="54 32 10 76 54 32 10 76 48 54 4f" },
+    { machine="mgakuen2", Pointer=0, data="76 54 32 10 01 23 45 67 aa 55 a5" },
+
+
+    { machine="qtono1",   Pointer=0, data="12 34 56 70 12 34 56 70 11 11 11" },
+    { machine="qsangoku", Pointer=0, data="23 45 67 01 23 45 67 01 18 28 18" },
+    { machine="block",    Pointer=0, data="02 46 13 57 64 20 75 31 00 02 01" }
 ]
 
 [dipsw]

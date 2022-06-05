@@ -34,8 +34,8 @@
     <mraauthor>jotego</mraauthor>
     <rom index="0" zip="cworld.zip" md5="None">
         <part>
-            00 00 00 00 00 00 00 00
-            00 00 00 00 00 00 00 00
+            04 15 26 37 40 51 62 73
+            57 51 43 00 00 00 00 00
         </part>
         <!-- maincpu - starts at 0x0 -->
         <part name="cw05.bin" crc="d3c1723d"/>

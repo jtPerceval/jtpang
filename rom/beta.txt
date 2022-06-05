@@ -1,1 +1,24 @@
 pang
+bbros
+pompingw
+# Japanese
+dokaben
+
+# GFX problems (mapping)
+#block
+#maguken2
+#pkladies
+#cworld
+#qtono1
+#marukin
+
+#wrong obj shown
+#hatena
+
+#spang
+
+# Missing ROM
+#dokaben2
+
+# Not booting
+#spang

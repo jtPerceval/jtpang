@@ -34,8 +34,8 @@
     <mraauthor>jotego</mraauthor>
     <rom index="0" zip="spangj.zip|spang.zip" md5="None">
         <part>
-            00 00 00 00 00 00 00 00
-            00 00 00 00 00 00 00 00
+            45 12 36 70 67 01 23 45
+            55 AA 5A 00 00 00 00 00
         </part>
         <!-- maincpu - starts at 0x0 -->
         <part name="spj_06.11h" crc="1a548b0b"/>

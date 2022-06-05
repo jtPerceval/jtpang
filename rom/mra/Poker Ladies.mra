@@ -34,8 +34,8 @@
     <mraauthor>jotego</mraauthor>
     <rom index="0" zip="pkladies.zip" md5="None">
         <part>
-            00 00 00 00 00 00 00 00
-            00 00 00 00 00 00 00 00
+            76 54 32 10 01 23 45 67
+            AA 55 A5 00 00 00 00 00
         </part>
         <!-- maincpu - starts at 0x0 -->
         <part name="pko-prg1.14f" crc="86585a94"/>
