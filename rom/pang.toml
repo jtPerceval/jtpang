@@ -22,6 +22,7 @@ name="jtpang"
 [header]
 len=16
 data = [
+    # Kabuki codes
     { machine="cworld",   Pointer=0, data="04 15 26 37 40 51 62 73 57 51 43" },
     { machine="pang",     Pointer=0, data="01 23 45 67 76 54 32 10 65 48 24" },
     { machine="hatena",   Pointer=0, data="45 67 01 23 45 67 01 23 57 51 43" },
@@ -40,7 +41,9 @@ data = [
 
     { machine="qtono1",   Pointer=0, data="12 34 56 70 12 34 56 70 11 11 11" },
     { machine="qsangoku", Pointer=0, data="23 45 67 01 23 45 67 01 18 28 18" },
-    { machine="block",    Pointer=0, data="02 46 13 57 64 20 75 31 00 02 01" }
+    { machine="block",    Pointer=0, data="02 46 13 57 64 20 75 31 00 02 01" },
+    # GFX encoding
+    { machine="marukin",  Pointer=15, data="01" }
 ]
 
 [dipsw]
@@ -53,6 +56,7 @@ regions = [
     { name="oki", No_offset=true, start=$PCM_START },
 
     { name="gfx1", start=$CHAR_START, width=16, No_offset=true, sort_even=true },
+    { machine="pkladies", name="gfx1", width=16, start=$CHAR_START, No_offset=true },
     { name="gfx2", start=$OBJ_START, width=16, No_offset=true, sort_even=true }
 ]
 

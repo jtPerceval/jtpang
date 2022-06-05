@@ -48,10 +48,10 @@
         <!-- gfx1 - starts at 0x100000 -->
         <interleave output="16">
             <part name="pko-001.8h" crc="1ead5d9b" map="01"/>
-            <part name="pko-002.9h" crc="1cf02586" map="10"/>
+            <part name="pko-003.8j" crc="339ab4e6" map="10"/>
         </interleave>
         <interleave output="16">
-            <part name="pko-003.8j" crc="339ab4e6" map="01"/>
+            <part name="pko-002.9h" crc="1cf02586" map="01"/>
             <part name="pko-004.9j" crc="09ccb442" map="10"/>
         </interleave>
         <!-- gfx2 - starts at 0x300000 -->

@@ -5,12 +5,14 @@ pompingw
 dokaben
 
 # GFX problems (mapping)
-#block
 #maguken2
 #pkladies
 #cworld
 #qtono1
 #marukin
+
+#bad background on title screen
+#block
 
 #wrong obj shown
 #hatena
