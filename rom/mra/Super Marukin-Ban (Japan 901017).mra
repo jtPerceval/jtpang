@@ -44,14 +44,10 @@
         <!-- oki - starts at 0x80000 -->
         <part name="mg3-e.1d" crc="106c2fa9"/>
         <!-- gfx1 - starts at 0x100000 -->
-        <interleave output="16">
-            <part name="mg3-a.3k" crc="420f1de7" map="01"/>
-            <part name="mg3-c.6k" crc="fbeb66e8" map="10"/>
-        </interleave>
-        <interleave output="16">
-            <part name="mg3-b.4k" crc="d8de13fa" map="01"/>
-            <part name="mg3-d.7k" crc="8f6bd831" map="10"/>
-        </interleave>
+        <part name="mg3-a.3k" crc="420f1de7"/>
+        <part name="mg3-b.4k" crc="d8de13fa"/>
+        <part name="mg3-c.6k" crc="fbeb66e8"/>
+        <part name="mg3-d.7k" crc="8f6bd831"/>
         <!-- gfx2 - starts at 0x300000 -->
         <interleave output="16">
             <part name="mg3-05.2g" crc="7a738d2d" map="01"/>

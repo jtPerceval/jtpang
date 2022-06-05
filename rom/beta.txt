@@ -9,10 +9,10 @@ cworld
 # Control problems
 pkladies
 maguken2
+marukin
 
 # GFX problems (mapping)
 #qtono1
-#marukin
 
 #bad background on title screen
 #block
