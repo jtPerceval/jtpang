@@ -1,9 +1,11 @@
 pang
 bbros
 pompingw
-pkladies
 # Japanese
 dokaben
+
+# Control problems
+pkladies
 
 # GFX problems (mapping)
 #maguken2

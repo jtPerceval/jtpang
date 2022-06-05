@@ -29,6 +29,7 @@ module jtpang_video(
     input           flip,
     output          int_n,
     input           video_enb,
+    input           char_en,
 
     // CPU interface
     input           pal_bank,
@@ -119,6 +120,7 @@ jtpang_char u_char (
     .vf       ( vf          ),
     .hs       ( HS          ),
     .flip     ( flip        ),
+    .char_en  ( char_en     ),
 
     .vram_msb ( vram_msb    ),
     .attr_cs  ( attr_cs     ),

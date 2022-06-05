@@ -248,6 +248,7 @@ jtpang_video u_video(
     .VS         ( VS            ),
     .flip       ( dip_flip      ),
     .video_enb  ( video_enb     ),
+    .char_en    ( char_en       ),
 
     .pal_bank   ( pal_bank      ),
     .pal_cs     ( pal_cs        ),

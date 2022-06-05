@@ -26,6 +26,7 @@ module jtpang_char(
     input     [ 7:0]  vf,
     input             hs,
     input             flip,
+    input             char_en,
 
     input             vram_msb,
     input             vram_cs,
@@ -83,6 +84,7 @@ always @(posedge clk, posedge rst) begin
                 rom_data[25], rom_data[29], rom_data[17], rom_data[21],
                 rom_data[24], rom_data[28], rom_data[16], rom_data[20]
             };
+            if( !char_en ) pxl_data <= 0;
             { hflip, pal } <= { nx_hflip^~flip, nx_pal };
         end else
             pxl_data <= hflip ? pxl_data << 4 : pxl_data >> 4;
