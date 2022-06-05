@@ -1,15 +1,16 @@
 pang
 bbros
 pompingw
+
 # Japanese
 dokaben
+cworld
 
 # Control problems
 pkladies
+maguken2
 
 # GFX problems (mapping)
-#maguken2
-#cworld
 #qtono1
 #marukin
 
