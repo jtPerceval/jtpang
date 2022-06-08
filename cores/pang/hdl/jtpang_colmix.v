@@ -46,7 +46,7 @@ reg         half;
 reg  [ 3:0] nr,ng,nb;
 wire        obj_blank, pal_we;
 
-assign pal_we    = pal_cs & ~wr_n;
+assign pal_we    = pal_cs & ~wr_n; // this should be gated by video_enb sampled during blanking
 assign obj_blank = &obj_pxl[3:0];
 
 always @(posedge clk) begin
@@ -57,7 +57,10 @@ always @(posedge clk) begin
         if( pxl_cen ) begin
             half <= 0;
             { red, green, blue } <= { nr, ng, nb };
-            pal_a <= obj_blank ? ch_pxl : { 3'h0, obj_pxl };
+            // This is what the circuit suggests but this doesn't work well:
+            // pal_a <= &ch_pxl[3:0] ? 11'd0 :
+            //             obj_blank ? ch_pxl : { 3'h0, obj_pxl };
+            pal_a <= obj_blank ? ( &ch_pxl[3:0] ? 11'd0 : ch_pxl ) : { 3'h0, obj_pxl };
         end
         if( half )
             { ng, nb } <= col_half;
