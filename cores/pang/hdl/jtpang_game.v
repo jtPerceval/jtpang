@@ -114,7 +114,8 @@ wire [19:0] char_addr;
 wire [31:0] char_data;
 wire [16:0] obj_addr;
 wire [31:0] obj_data;
-wire        main_cs, char_cs, obj_cs;
+wire        main_cs, char_cs, obj_cs,
+            init_n;
 wire [17:0] pcm_addr;
 wire [19:0] main_addr;
 wire [ 7:0] main_data, pcm_data;
@@ -138,8 +139,8 @@ jtframe_frac_cen #( .W( 4), .WC( 4)) u_cen24(
 );
 
 jtpang_main u_main(
-    .clk         ( clk          ),
     .rst         ( rst          ),
+    .clk         ( clk          ),
     .cpu_cen     ( pxl_cen      ),
     .int_n       ( int_n        ),
 
@@ -151,6 +152,7 @@ jtpang_main u_main(
     .LVBL        ( LVBL         ),
     .LHBL        ( LHBL         ),
     .dip_pause   ( dip_pause    ),
+    .init_n      ( init_n       ),
 
     .char_en     ( char_en      ),
     .obj_en      ( obj_en       ),
@@ -280,10 +282,12 @@ jtpang_video u_video(
     .blue       ( blue          ),
     .gfx_en     ( gfx_en        )
 );
-/* verilator tracing_off */
+/* xxxverilator tracing_off */
 jtpang_sdram u_sdram(
     .rst        ( rst           ),
     .clk        ( clk           ),
+    .LVBL       ( LVBL          ),
+    .init_n     ( init_n        ),
 
     .main_cs    ( main_cs       ),
     .main_addr  ( main_addr     ),

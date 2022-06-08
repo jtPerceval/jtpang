@@ -32,6 +32,7 @@ module jtpang_main(
     input               LVBL,
     input               LHBL,
     input               dip_pause,
+    input               init_n,
     output reg          char_en,
     output reg          obj_en,
     output reg          video_enb,
@@ -176,9 +177,13 @@ always @(posedge clk, posedge rst) begin
 end
 
 always @(posedge clk) begin
+    // init_n low means that the game had no NVRAM contents
+    // and needs to run the initialization procedure. This
+    // is needed for Super Pang. If the MRA could have a
+    // default value for the NVRAM, this wouldn't be needed
     case( A[1:0] )
         0: cab_dout <= { coin, service, 2'b11,
-            start_button[0], 1'b1, start_button[1], 1'b1 };
+            start_button[0] & init_n, 1'b1, start_button[1], 1'b1 };
         1: cab_dout <= { joystick1[3:0], joystick1[4], joystick1[5], 2'b11 };
         2: cab_dout <= { joystick2[3:0], joystick2[4], joystick2[5], 2'b11 };
         default:;

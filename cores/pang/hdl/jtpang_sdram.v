@@ -19,6 +19,8 @@
 module jtpang_sdram(
     input           rst,
     input           clk,
+    input           LVBL,
+    output reg      init_n, // triggers initialization when no NVRAM was loaded
 
     // Main CPU
     input            main_cs,
@@ -87,6 +89,9 @@ localparam [24:0] BA1_START   = `PCM_START,
 wire [21:0] pre_addr;
 wire        is_obj, prom_we, header;
 wire        dwn_wr;
+reg         LVBLl;
+reg  [ 8:0] frame_cnt;
+reg         ram_done = 0;   // it cannot use the rst signal
 
 assign dwn_wr    = ioctl_wr & ~ioctl_ram;
 assign dwnld_busy = downloading;
@@ -96,6 +101,17 @@ assign kabuki_we = dwn_wr && header && ioctl_addr[3:0]<11;
 always @(posedge clk) begin
     if( kabuki_we && ioctl_addr[3:0]==0 )
         kabuki_en <= ioctl_dout!=0;
+end
+
+always @(posedge clk) begin
+    LVBLl  <= LVBL;
+    if( downloading ) begin
+        frame_cnt <= 0;
+        if( ioctl_ram && ioctl_wr ) ram_done <= 1;
+    end else if( !LVBL & LVBLl ) begin
+        if( ~&frame_cnt ) frame_cnt <= frame_cnt + 1'd1;
+        init_n <= &frame_cnt;
+    end
 end
 
 always @* begin
