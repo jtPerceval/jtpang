@@ -62,9 +62,10 @@ regions = [
     { machine="cworld", name="gfx1", width=16, start=$CHAR_START, No_offset=true, name_sort=[
         "cw08.bin", "cw18.bin", "cw09.bin", "cw19.bin", "cw10.bin", "cw20.bin",
         "cw11.bin", "cw21.bin"] },
-    { name="gfx2", start=$OBJ_START, width=16, No_offset=true, sort_even=true }
+    { name="gfx2", start=$OBJ_START, width=16, No_offset=true, sort_even=true },
+    { name="eeprom", eeprom=true }
 ]
 
 order = [
-    "maincpu", "oki", "gfx1", "gfx2"
+    "maincpu", "oki", "gfx1", "gfx2", "eeprom"
 ]

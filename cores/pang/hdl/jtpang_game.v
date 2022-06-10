@@ -282,7 +282,7 @@ jtpang_video u_video(
     .blue       ( blue          ),
     .gfx_en     ( gfx_en        )
 );
-/* xxxverilator tracing_off */
+/* verilator tracing_off */
 jtpang_sdram u_sdram(
     .rst        ( rst           ),
     .clk        ( clk           ),

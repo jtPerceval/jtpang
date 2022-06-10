@@ -88,7 +88,7 @@ jtframe_frac_cen #( .W( 2), .WC( 4)) u_cen48(
 
 jtframe_vtimer #(
     .HB_START ( 9'd383+9'd64+HOFFSET ),
-    .HB_END   ( 9'd64+HOFFSET        ),
+    .HB_END   ( 9'd63+HOFFSET        ),
     .HCNT_END ( 9'd511      ),
     .HS_START ( 9'd511-9'd16),
     .VB_START ( 9'hf7       ),

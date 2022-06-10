@@ -51,22 +51,18 @@ assign obj_blank = &obj_pxl[3:0];
 
 always @(posedge clk) begin
     half <= ~half;
-    if( (!LVBL || !LHBL) || video_enb ) begin
-        { red, green, blue } <= 0;
-    end else begin
-        if( pxl_cen ) begin
-            half <= 0;
-            { red, green, blue } <= { nr, ng, nb };
-            // This is what the circuit suggests but this doesn't work well:
-            // pal_a <= &ch_pxl[3:0] ? 11'd0 :
-            //             obj_blank ? ch_pxl : { 3'h0, obj_pxl };
-            pal_a <= obj_blank ? ( &ch_pxl[3:0] ? 11'd0 : ch_pxl ) : { 3'h0, obj_pxl };
-        end
-        if( half )
-            { ng, nb } <= col_half;
-        else
-            nr <= col_half[3:0];
+    if( pxl_cen ) begin
+        half <= 0;
+        { red, green, blue } <= ((!LVBL || !LHBL) || video_enb ) ? 12'd0 : { nr, ng, nb };
+        // This is what the circuit suggests but this doesn't work well:
+        // pal_a <= &ch_pxl[3:0] ? 11'd0 :
+        //             obj_blank ? ch_pxl : { 3'h0, obj_pxl };
+        pal_a <= obj_blank ? ( &ch_pxl[3:0] ? 11'd0 : ch_pxl ) : { 3'h0, obj_pxl };
     end
+    if( half )
+        { ng, nb } <= col_half;
+    else
+        nr <= col_half[3:0];
 end
 
 jtframe_dual_ram #(.aw(12)) u_dual_ram (

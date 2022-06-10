@@ -1,14 +1,17 @@
 pang
 bbros
 pompingw
+spang
+sbbros
+spangj
 
 # Japanese
-dokaben
-cworld
+# dokaben
+# cworld
 
 # Control problems
-pkladies
-maguken2
+# pkladies
+# maguken2
 
 #bad background on title screen
 #block
@@ -16,9 +19,6 @@ maguken2
 #wrong obj shown
 #hatena
 #marukin
-#spang
-
-#spang
 
 # Missing ROM
 #dokaben2
