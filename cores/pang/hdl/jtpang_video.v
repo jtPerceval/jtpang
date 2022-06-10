@@ -66,7 +66,7 @@ module jtpang_video(
     input    [3:0]  gfx_en
 );
 
-localparam [8:0] HOFFSET = 9'd10;
+localparam [8:0] HOFFSET = 9'd12;
 
 wire [ 7:0] obj_pxl;
 wire [10:0] char_pxl;
