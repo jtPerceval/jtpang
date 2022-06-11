@@ -117,7 +117,7 @@ always @* begin
         else
             rom_addr[14] = A[14];
     end
-    pal_cs   = !mreq_n && rfsh_n && A[15:12]==4'hc && !A[11] && video_enb;
+    pal_cs   = !mreq_n && rfsh_n && A[15:12]==4'hc && !A[11];
     attr_cs  = !mreq_n && rfsh_n && A[15:12]==4'hc &&  A[11];
     vram_cs  = !mreq_n && rfsh_n && A[15:12]==4'hd;
     ram_cs   = !mreq_n && rfsh_n && A[15:12]>=4'he;

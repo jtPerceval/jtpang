@@ -41,6 +41,7 @@ module jtpang_colmix(
 );
 
 reg  [10:0] pal_a;
+wire [11:0] pal_wa;
 wire [ 7:0] col_half;
 reg         half;
 reg  [ 3:0] nr,ng,nb;
@@ -48,6 +49,7 @@ wire        obj_blank, pal_we;
 
 assign pal_we    = pal_cs & ~wr_n & ~video_en;
 assign obj_blank = &obj_pxl[3:0];
+assign pal_wa    = { cpu_addr[0], pal_bank, cpu_addr[10:1] };
 
 always @(posedge clk) begin
     half <= ~half;
@@ -69,7 +71,7 @@ jtframe_dual_ram #(.aw(12)) u_dual_ram (
     // CPU
     .clk0  ( clk        ),
     .data0 ( cpu_dout   ),
-    .addr0 ( { cpu_addr[0], pal_bank, cpu_addr[10:1] } ),
+    .addr0 ( pal_wa     ),
     .we0   ( pal_we     ),
     .q0    ( pal_dout   ),
     // video
