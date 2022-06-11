@@ -35,7 +35,7 @@ module jtpang_main(
     input               init_n,
     output reg          char_en,
     output reg          obj_en,
-    output reg          video_enb,
+    output reg          video_enq,
 
     // Video
     output  reg         attr_cs,
@@ -88,7 +88,7 @@ reg         eeprom_we;
 wire        m1_n, rd_n, wr_n, mreq_n, rfsh_n,
             iorq_n, LHVBLK;
 reg         ram_cs, cab_cs, misc_cs, sys_cs,
-            vbank_cs, bank_cs, LHVBLK_l, video_enq,
+            vbank_cs, bank_cs, LHVBLK_l, video_enb,
             scs, sclk, sdi; // EEPROM control signals
 wire        sdo_raw;
 reg         sdo, sclk_l;

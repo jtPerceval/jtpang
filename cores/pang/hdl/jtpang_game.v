@@ -106,7 +106,7 @@ wire        fm_cs, oki_cs,
             pal_cs, vram_msb, vram_cs, attr_cs;
 wire [11:0] cpu_addr;
 wire        kabuki_we, kabuki_en;
-wire        char_en, obj_en, video_enb, pal_bank;
+wire        char_en, obj_en, video_en, pal_bank;
 wire        dma_go, busak_n, busrq_n;
 
 // SDRAM
@@ -127,7 +127,7 @@ assign pcm_cen    = cen24[3];
 assign ba_wr      = 0;
 assign ba0_din    = 0;
 assign ba0_din_m  = 0;
-assign debug_view = {7'd0,video_enb};
+assign debug_view = {7'd0, ~video_en};
 
 // The sound uses the 24 MHz clock
 jtframe_frac_cen #( .W( 4), .WC( 4)) u_cen24(
@@ -156,7 +156,7 @@ jtpang_main u_main(
 
     .char_en     ( char_en      ),
     .obj_en      ( obj_en       ),
-    .video_enb   ( video_enb    ),
+    .video_enq   ( video_en     ),
 
     .attr_cs     ( attr_cs      ),
     .vram_cs     ( vram_cs      ),
@@ -249,7 +249,7 @@ jtpang_video u_video(
     .HS         ( HS            ),
     .VS         ( VS            ),
     .flip       ( dip_flip      ),
-    .video_enb  ( video_enb     ),
+    .video_en   ( video_en      ),
     .char_en    ( char_en       ),
 
     .pal_bank   ( pal_bank      ),

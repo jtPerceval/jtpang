@@ -23,7 +23,7 @@ module jtpang_colmix(
     input             pxl_cen,
     input             LHBL,
     input             LVBL,
-    input             video_enb,
+    input             video_en,
 
     input      [ 7:0] obj_pxl,
     input      [10:0] ch_pxl,
@@ -46,14 +46,14 @@ reg         half;
 reg  [ 3:0] nr,ng,nb;
 wire        obj_blank, pal_we;
 
-assign pal_we    = pal_cs & ~wr_n; // this should be gated by video_enb sampled during blanking
+assign pal_we    = pal_cs & ~wr_n & ~video_en;
 assign obj_blank = &obj_pxl[3:0];
 
 always @(posedge clk) begin
     half <= ~half;
     if( pxl_cen ) begin
         half <= 0;
-        { red, green, blue } <= ((!LVBL || !LHBL) || video_enb ) ? 12'd0 : { nr, ng, nb };
+        { red, green, blue } <= (!LVBL || !LHBL || !video_en ) ? 12'd0 : { nr, ng, nb };
         // This is what the circuit suggests but this doesn't work well:
         // pal_a <= &ch_pxl[3:0] ? 11'd0 :
         //             obj_blank ? ch_pxl : { 3'h0, obj_pxl };
