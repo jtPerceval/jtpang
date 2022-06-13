@@ -102,7 +102,7 @@ assign kabuki_we = dwn_wr && header && ioctl_addr[3:0]<11;
 always @(posedge clk) begin
     if( kabuki_we && ioctl_addr[3:0]==0 )
         kabuki_en <= ioctl_dout!=0;
-    if( ioctl_addr==15 && ioctl_wr ) ctrl_type <= ioctl_dout[1:0];
+    if( ioctl_addr==15 && ioctl_wr && !ioctl_ram ) ctrl_type <= ioctl_dout[1:0];
 end
 
 always @(posedge clk) begin
