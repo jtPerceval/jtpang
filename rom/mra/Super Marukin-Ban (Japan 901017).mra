@@ -35,7 +35,7 @@
     <rom index="0" zip="marukin.zip" md5="None">
         <part>
             54 32 10 76 54 32 10 76
-            48 54 4F 00 00 00 00 01
+            48 54 4F 00 00 00 01 00
         </part>
         <!-- maincpu - starts at 0x0 -->
         <part name="mg3-01.9d" crc="04357973"/>

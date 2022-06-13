@@ -21,6 +21,7 @@ module jtpang_main(
     input               rst,
     input               cpu_cen,
     input               int_n,
+    input        [ 1:0] ctrl_type,
 
     // BUS sharing
     output       [11:0] cpu_addr,
@@ -184,8 +185,17 @@ always @(posedge clk) begin
     case( A[1:0] )
         0: cab_dout <= { coin, service, 2'b11,
             start_button[0] & init_n, 1'b1, start_button[1], 1'b1 };
-        1: cab_dout <= { joystick1[3:0], joystick1[4], joystick1[5], 2'b11 };
-        2: cab_dout <= { joystick2[3:0], joystick2[4], joystick2[5], 2'b11 };
+        1: begin
+            cab_dout <= { joystick1[3:0], joystick1[4], joystick1[5], 2'b11 };
+            // if( ctrl_type==1 ) begin // "Block" game
+            //     cab_dout[7] <= joystick1[4]; // button location
+                //cab_dout[3:0] <= debug_bus[3:0];
+            // end
+        end
+        2: begin
+            cab_dout <= { joystick2[3:0], joystick2[4], joystick2[5], 2'b11 };
+            //if( ctrl_type==1 ) cab_dout[7] <= joystick2[4];
+        end
         default:;
     endcase
     cpu_din <=

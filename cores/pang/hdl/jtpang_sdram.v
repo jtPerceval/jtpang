@@ -22,6 +22,7 @@ module jtpang_sdram(
     input           LVBL,
     output reg      init_n, // triggers initialization when no NVRAM was loaded
 
+    output reg [1:0] ctrl_type,
     // Main CPU
     input            main_cs,
     input     [19:0] main_addr,
@@ -101,6 +102,7 @@ assign kabuki_we = dwn_wr && header && ioctl_addr[3:0]<11;
 always @(posedge clk) begin
     if( kabuki_we && ioctl_addr[3:0]==0 )
         kabuki_en <= ioctl_dout!=0;
+    if( ioctl_addr==15 && ioctl_wr ) ctrl_type <= ioctl_dout[1:0];
 end
 
 always @(posedge clk) begin

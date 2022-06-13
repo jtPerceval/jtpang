@@ -43,7 +43,9 @@ data = [
     { machine="qsangoku", Pointer=0, data="23 45 67 01 23 45 67 01 18 28 18" },
     { machine="block",    Pointer=0, data="02 46 13 57 64 20 75 31 00 02 01" },
     # GFX encoding
-    { machine="marukin",  Pointer=15, data="01" }
+    { machine="marukin",  Pointer=14, data="01" },
+    # Input type
+    { machine="block",  Pointer=15, data="01" }
 ]
 
 [dipsw]

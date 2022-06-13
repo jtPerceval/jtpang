@@ -119,6 +119,7 @@ wire        main_cs, char_cs, obj_cs,
 wire [17:0] pcm_addr;
 wire [19:0] main_addr;
 wire [ 7:0] main_data, pcm_data;
+wire [ 1:0] ctrl_type;
 wire        main_ok, obj_ok, pcm_ok, pcm_bank;
 
 assign { fm_cen, cpu_cen } = cen24[1:0];
@@ -127,7 +128,7 @@ assign pcm_cen    = cen24[3];
 assign ba_wr      = 0;
 assign ba0_din    = 0;
 assign ba0_din_m  = 0;
-assign debug_view = {7'd0, ~video_en};
+assign debug_view = {6'd0, ctrl_type};
 
 // The sound uses the 24 MHz clock
 jtframe_frac_cen #( .W( 4), .WC( 4)) u_cen24(
@@ -143,6 +144,7 @@ jtpang_main u_main(
     .clk         ( clk          ),
     .cpu_cen     ( pxl_cen      ),
     .int_n       ( int_n        ),
+    .ctrl_type   ( ctrl_type    ),
 
     .cpu_addr    ( cpu_addr     ),
     .cpu_rnw     ( cpu_rnw      ),
@@ -288,6 +290,7 @@ jtpang_sdram u_sdram(
     .clk        ( clk           ),
     .LVBL       ( LVBL          ),
     .init_n     ( init_n        ),
+    .ctrl_type  ( ctrl_type     ),
 
     .main_cs    ( main_cs       ),
     .main_addr  ( main_addr     ),

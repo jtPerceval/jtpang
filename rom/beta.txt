@@ -1,20 +1,23 @@
+# beta 1
 pang
+# beta 2
 bbros
 pompingw
 spang
 sbbros
 spangj
 
+# beta 3
 # Japanese
-# dokaben
-# cworld
+dokaben
+blockr1
 
 # Control problems
 # pkladies
 # maguken2
-
-#bad background on title screen
-#block
+# block
+# blockj
+# blockr2
 
 #wrong obj shown
 #hatena
@@ -25,3 +28,5 @@ spangj
 
 # Not booting
 #qtono1
+#qsangoku
+#cworld
