@@ -35,6 +35,8 @@ module jtpang_game(
     input   [ 1:0]  coin_input,
     input   [ 5:0]  joystick1,
     input   [ 5:0]  joystick2,
+    input   [15:0]  mouse_1p,
+    input   [15:0]  mouse_2p,
 
     // SDRAM interface
     input           downloading,
@@ -128,7 +130,7 @@ assign pcm_cen    = cen24[3];
 assign ba_wr      = 0;
 assign ba0_din    = 0;
 assign ba0_din_m  = 0;
-assign debug_view = {6'd0, ctrl_type};
+assign debug_view = 0;
 
 // The sound uses the 24 MHz clock
 jtframe_frac_cen #( .W( 4), .WC( 4)) u_cen24(
@@ -186,6 +188,9 @@ jtpang_main u_main(
     .coin        ( coin_input[0]),
     .service     ( service      ),
     .test        ( dip_test     ),
+
+    .mouse_1p    ( mouse_1p[7:0]),
+    .mouse_2p    ( mouse_2p[7:0]),
 
     // NVRAM
     .prog_addr   ( ioctl_addr[12:0] ),

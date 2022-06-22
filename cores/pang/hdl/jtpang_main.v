@@ -63,6 +63,8 @@ module jtpang_main(
     input               coin,
     input               service,
     input               test,
+    input        [ 7:0] mouse_1p,
+    input        [ 7:0] mouse_2p,
     // NVRAM dump/restoration
     input        [12:0] prog_addr,
     input        [ 7:0] prog_data,
@@ -84,11 +86,13 @@ wire [ 7:0] dec_dout, sys_dout, ram_dout, nvram_dout;
 wire [15:0] A, eeprom_dout;
 reg  [ 3:0] bank;
 reg  [ 7:0] cpu_din, cab_dout;
+reg         dial_sel;
+
 //wire        nvram_we,
 reg         eeprom_we;
 wire        m1_n, rd_n, wr_n, mreq_n, rfsh_n,
             iorq_n, LHVBLK;
-reg         ram_cs, cab_cs, misc_cs, sys_cs,
+reg         ram_cs, cab_cs, misc_cs, sys_cs, input_cs,
             vbank_cs, bank_cs, LHVBLK_l, video_enb,
             scs, sclk, sdi; // EEPROM control signals
 wire        sdo_raw;
@@ -123,6 +127,7 @@ always @* begin
     vram_cs  = !mreq_n && rfsh_n && A[15:12]==4'hd;
     ram_cs   = !mreq_n && rfsh_n && A[15:12]>=4'he;
     misc_cs  = !iorq_n && A[4:0]==0 && !wr_n;
+    input_cs = !iorq_n && A[4:0]==1 && !wr_n;
     bank_cs  = !iorq_n && A[4:0]==2 && !wr_n;
     cab_cs   = !iorq_n && A[4:0]<3  && !rd_n;
     dma_go   = !iorq_n && A[4:0]==6;
@@ -147,11 +152,13 @@ always @(posedge clk, posedge rst) begin
         sclk      <= 0;
         sdi       <= 0;
         LHVBLK_l  <= 0;
+        dial_sel  <= 0;
     end else begin
         LHVBLK_l <= LHVBLK;
         if( LHVBLK && !LHVBLK_l ) video_enq <= ~video_enb;
         if( bank_cs ) bank     <= cpu_dout[3:0];
         if( vbank_cs) vram_msb <= cpu_dout[0];
+        if( input_cs) dial_sel <= ~cpu_dout[7];
         if( misc_cs ) begin
             // chip 11D takes bits 0,1,2,5
             // chip 12D takes bits 3,4,6,7
@@ -177,24 +184,46 @@ always @(posedge clk, posedge rst) begin
     end
 end
 
+reg LVBLl;
+reg [7:0] fcnt;
+
+always @(posedge clk) begin
+    LVBLl <= LVBL;
+    if( LVBLl && !LVBL ) fcnt <= fcnt+1;
+end
+
 always @(posedge clk) begin
     // init_n low means that the game had no NVRAM contents
     // and needs to run the initialization procedure. This
     // is needed for Super Pang. If the MRA could have a
     // default value for the NVRAM, this wouldn't be needed
+    cab_dout <= 8'hff;
     case( A[1:0] )
         0: cab_dout <= { coin, service, 2'b11,
             start_button[0] & init_n, 1'b1, start_button[1], 1'b1 };
         1: begin
-            cab_dout <= { joystick1[3:0], joystick1[4], joystick1[5], 2'b11 };
-            // if( ctrl_type==1 ) begin // "Block" game
-            //     cab_dout[7] <= joystick1[4]; // button location
-                //cab_dout[3:0] <= debug_bus[3:0];
-            // end
+            if( ctrl_type==1 ) begin // "Block" game
+                if( dial_sel ) begin
+                    cab_dout <= { mouse_1p[6:1],2'b11 };
+                end else begin
+                    cab_dout[7] <= joystick1[4];
+                    cab_dout[3] <= ~mouse_1p[7];
+                end
+            end else begin
+                cab_dout <= { joystick1[3:0], joystick1[4], joystick1[5], 2'b11 };
+            end
         end
         2: begin
-            cab_dout <= { joystick2[3:0], joystick2[4], joystick2[5], 2'b11 };
-            //if( ctrl_type==1 ) cab_dout[7] <= joystick2[4];
+            if( ctrl_type==1 ) begin // "Block" game
+                if( dial_sel ) begin
+                    cab_dout <= { mouse_2p[6:1],2'b11 };
+                end else begin
+                    cab_dout[7] <= joystick2[4];
+                    cab_dout[3] <= ~mouse_2p[7];
+                end
+            end else begin
+                cab_dout <= { joystick2[3:0], joystick2[4], joystick2[5], 2'b11 };
+            end
         end
         default:;
     endcase
