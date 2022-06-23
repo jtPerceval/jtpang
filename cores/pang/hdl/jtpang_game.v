@@ -130,7 +130,7 @@ assign pcm_cen    = cen24[3];
 assign ba_wr      = 0;
 assign ba0_din    = 0;
 assign ba0_din_m  = 0;
-assign debug_view = 0;
+assign debug_view = debug_bus[0] ? mouse_1p[15:8] : mouse_1p[7:0];
 
 // The sound uses the 24 MHz clock
 jtframe_frac_cen #( .W( 4), .WC( 4)) u_cen24(

@@ -10,9 +10,11 @@
      schematic diagrams.
         Awesome work!
 
-      3th June 2022
+      24th June 2022
 
-     known issues
+  Block Block requires a mouse
+
+     \Rknown issues\W
 
   - Envelope times in the OPLL
  chip are wrong. Working on it
@@ -20,8 +22,10 @@
   implemented yet, so the game
   may be a bit too fast on busy
   scenes
-  - Other games on the same
-  hardware still don't boot
+  - MiSTer does not support 2
+  mice for 2 players on
+  Block Block
+
 
  \B______ \RDIRECTORS\B _______\W
 
