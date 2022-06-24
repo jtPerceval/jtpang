@@ -35,7 +35,7 @@
     <rom index="0" zip="cworld.zip" md5="None">
         <part>
             04 15 26 37 40 51 62 73
-            57 51 43 00 00 00 00 00
+            57 51 43 00 00 00 00 02
         </part>
         <!-- maincpu - starts at 0x0 -->
         <part name="cw05.bin" crc="d3c1723d"/>
@@ -77,5 +77,5 @@
     <rom index="1">
         <part>00</part>
     </rom>
-    <buttons names="button 1,button 2,Start,Coin,Core credits" default="Y,X,Start,Select,-" count="2"/>
+    <buttons names="button 1,button 2,-,-,Start,Coin,Core credits" default="Y,X,B,A,Start,Select,-" count="2"/>
 </misterromdescription>

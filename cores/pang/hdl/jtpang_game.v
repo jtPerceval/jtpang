@@ -33,8 +33,8 @@ module jtpang_game(
     // cabinet I/O
     input   [ 1:0]  start_button,
     input   [ 1:0]  coin_input,
-    input   [ 5:0]  joystick1,
-    input   [ 5:0]  joystick2,
+    input   [ 7:0]  joystick1,
+    input   [ 7:0]  joystick2,
     input   [15:0]  mouse_1p,
     input   [15:0]  mouse_2p,
 

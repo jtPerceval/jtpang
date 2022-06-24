@@ -57,8 +57,8 @@ module jtpang_main(
     output reg          pcm_bank,
     input         [7:0] pcm_dout,
     // cabinet I/O
-    input         [5:0] joystick1,
-    input         [5:0] joystick2,
+    input         [7:0] joystick1,
+    input         [7:0] joystick2,
     input         [1:0] start_button,
     input               coin,
     input               service,
@@ -81,6 +81,8 @@ module jtpang_main(
     input        [ 7:0] rom_data,
     input               rom_ok
 );
+
+localparam [1:0] BLOCK=2'd1, CWORLD=2'd2;
 
 wire [ 7:0] dec_dout, sys_dout, ram_dout, nvram_dout;
 wire [15:0] A, eeprom_dout;
@@ -184,6 +186,10 @@ always @(posedge clk, posedge rst) begin
     end
 end
 
+function [3:0] reverse( input [3:0] a );
+    reverse = { a[0], a[1], a[2], a[3] };
+endfunction
+
 always @(posedge clk) begin
     // init_n low means that the game had no NVRAM contents
     // and needs to run the initialization procedure. This
@@ -191,31 +197,45 @@ always @(posedge clk) begin
     // default value for the NVRAM, this wouldn't be needed
     cab_dout <= 8'hff;
     case( A[1:0] )
-        0: cab_dout <= { coin, service, 2'b11,
-            start_button[0] & init_n, 1'b1, start_button[1], 1'b1 };
+        0:
+            case( ctrl_type )
+                CWORLD:
+                    cab_dout <= { coin, service, 5'h1f, service };
+                default:
+                    cab_dout <= { coin, service, 2'b11,
+                    start_button[0] & init_n, 1'b1, start_button[1], 1'b1 };
+            endcase
         1: begin
-            if( ctrl_type==1 ) begin // "Block" game
-                if( dial_sel ) begin
-                    cab_dout <= { mouse_1p[6:1],2'b11 };
-                end else begin
-                    cab_dout[7] <= joystick1[4];
-                    cab_dout[3] <= ~mouse_1p[7];
+            case( ctrl_type )
+                CWORLD: cab_dout <=
+                    { reverse(joystick1[7:4]& joystick1[3:0]), 1'b1, start_button[0], 2'b11 };
+                BLOCK: begin
+                    if( dial_sel ) begin
+                        cab_dout <= { mouse_1p[6:1],2'b11 };
+                    end else begin
+                        cab_dout[7] <= joystick1[4];
+                        cab_dout[3] <= ~mouse_1p[7];
+                    end
                 end
-            end else begin
-                cab_dout <= { joystick1[3:0], joystick1[4], joystick1[5], 2'b11 };
-            end
+                default:
+                    cab_dout <= { joystick1[3:0], joystick1[4], joystick1[5], 2'b11 };
+            endcase
         end
         2: begin
-            if( ctrl_type==1 ) begin // "Block" game
-                if( dial_sel ) begin
-                    cab_dout <= { mouse_2p[6:1],2'b11 };
-                end else begin
-                    cab_dout[7] <= joystick2[4];
-                    cab_dout[3] <= ~mouse_2p[7];
+            case( ctrl_type )
+                CWORLD: cab_dout <=
+                    { reverse(joystick2[7:4]& joystick2[3:0]), 1'b1, start_button[1], 2'b11 };
+                BLOCK: begin
+                    if( dial_sel ) begin
+                        cab_dout <= { mouse_2p[6:1],2'b11 };
+                    end else begin
+                        cab_dout[7] <= joystick2[4];
+                        cab_dout[3] <= ~mouse_2p[7];
+                    end
                 end
-            end else begin
-                cab_dout <= { joystick2[3:0], joystick2[4], joystick2[5], 2'b11 };
-            end
+                default:
+                    cab_dout <= { joystick2[3:0], joystick2[4], joystick2[5], 2'b11 };
+            endcase
         end
         default:;
     endcase

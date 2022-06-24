@@ -11,13 +11,15 @@ spangj
 # Japanese
 dokaben
 blockr1
+block
+blockj
+blockr2
+blockbl
+cworld
 
 # Control problems
 # pkladies
 # maguken2
-# block
-# blockj
-# blockr2
 
 #wrong obj shown
 #hatena
@@ -29,4 +31,3 @@ blockr1
 # Not booting
 #qtono1
 #qsangoku
-#cworld

@@ -35,7 +35,7 @@
     <rom index="0" zip="qtono1.zip" md5="None">
         <part>
             12 34 56 70 12 34 56 70
-            11 11 11 00 00 00 00 00
+            11 11 11 00 00 00 00 02
         </part>
         <!-- maincpu - starts at 0x0 -->
         <part name="q3-05.rom" crc="1dd0a344"/>
@@ -77,5 +77,5 @@
     <rom index="1">
         <part>00</part>
     </rom>
-    <buttons names="button 1,button 2,Start,Coin,Core credits" default="Y,X,Start,Select,-" count="2"/>
+    <buttons names="button 1,button 2,-,-,Start,Coin,Core credits" default="Y,X,B,A,Start,Select,-" count="2"/>
 </misterromdescription>

@@ -81,5 +81,5 @@
         <dip name="Demo Sounds" bits="13" ids="On,Off"/>
         <dip name="Help Mode" bits="14" ids="On,Off"/>
     </switches>
-    <buttons names="button 1,button 2,Start,Coin,Core credits" default="Y,X,Start,Select,-" count="2"/>
+    <buttons names="button 1,button 2,-,-,Start,Coin,Core credits" default="Y,X,B,A,Start,Select,-" count="2"/>
 </misterromdescription>

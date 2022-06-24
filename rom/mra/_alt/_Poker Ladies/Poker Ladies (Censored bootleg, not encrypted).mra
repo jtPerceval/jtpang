@@ -98,5 +98,5 @@
         <!-- DSW1 -->
         <dip name="Maximum Hands" bits="8,11" ids="0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15"/>
     </switches>
-    <buttons names="button 1,button 2,Start,Coin,Core credits" default="Y,X,Start,Select,-" count="2"/>
+    <buttons names="button 1,button 2,-,-,Start,Coin,Core credits" default="Y,X,B,A,Start,Select,-" count="2"/>
 </misterromdescription>
