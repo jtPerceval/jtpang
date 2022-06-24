@@ -184,14 +184,6 @@ always @(posedge clk, posedge rst) begin
     end
 end
 
-reg LVBLl;
-reg [7:0] fcnt;
-
-always @(posedge clk) begin
-    LVBLl <= LVBL;
-    if( LVBLl && !LVBL ) fcnt <= fcnt+1;
-end
-
 always @(posedge clk) begin
     // init_n low means that the game had no NVRAM contents
     // and needs to run the initialization procedure. This

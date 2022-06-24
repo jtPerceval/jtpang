@@ -98,7 +98,7 @@ module jtpang_game(
 wire [ 3:0] n;
 wire [ 3:0] m;
 wire [ 3:0] cen24;
-wire        pcm_cen, fm_cen, cpu_cen;
+wire        pcm_cen, fm_cen;
 
 // CPU bus
 wire [ 7:0] cpu_dout, pcm_dout,
@@ -124,7 +124,7 @@ wire [ 7:0] main_data, pcm_data;
 wire [ 1:0] ctrl_type;
 wire        main_ok, obj_ok, pcm_ok, pcm_bank;
 
-assign { fm_cen, cpu_cen } = cen24[1:0];
+assign fm_cen     = cen24[1];
 assign pcm_cen    = cen24[3];
 // The game does not write to the SDRAM
 assign ba_wr      = 0;
