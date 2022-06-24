@@ -14,7 +14,6 @@ blockr1
 block
 blockj
 blockr2
-blockbl
 cworld
 
 # Control problems
@@ -29,5 +28,6 @@ cworld
 #dokaben2
 
 # Not booting
+# blockbl
 #qtono1
 #qsangoku
