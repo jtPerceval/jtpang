@@ -12,7 +12,13 @@
 
       24th June 2022
 
-  Block Block requires a mouse
+  Block Block:
+  -the main version plays
+   with joystick
+  -Other versions require
+   a mouse
+  -MiST supports two mice,
+   MiSTer only supports one
 
      \Rknown issues\W
 
@@ -26,37 +32,37 @@
   mice for 2 players on
   Block Block
 
+\B______ \RDIRECTORS\B _______\W
+80's spaceman   A. Villena
+AnotherJoe      Bender
+    Boogermann
+    Carlo Castagnasso
+Chris Gelatt    DJ Hard Rich
+Darren Chell    Filip Kindt
+Frederic Mahe   James D
+Jeffrey Pierce  John Lange
+    Kevin finisterre
+Louis Martinez  Martin Birkeldh
+    Porkchop Express
+Rysha           Shawn Henderson
+TT_Hipster1941  Ulf Skutnabba
+atrac17
 
- \B______ \RDIRECTORS\B _______\W
-
-        Boogerman
-80's spaceman  AnotherJoe
-atrac17        Chris Gelatt
-DJ Hard Rich   Darren Chell
-Filip Kindt    Frederic Mahe
-James D        Jeffrey Pierce
-John Lange     Kevin finisterre
-Louis Martinez Martin Birkeldh
-Porkchop Express  - Rysha -
-Shawn Henderson TT_Hipster1941
-Ulf Skutnabba Carlo Castagnasso
-     Antonio Villena
 
        \BThanks to\W
-
 \RAndrea Bogazzi  Angel R Louzan
 \RArcade Express  Ben Sanborn
 \RBob Gallardo    Brian Sallee
-\RDaniel Bauza    Eduard Rozenberg
-\R       Fulvio Venturelli
-\R       GiRo SiNToRNiLLoS
-\RJavi Rodas G    Jim Weinhart
+\R    Daniel Bauza
+\R    Eduard Rozenberg
+\R    Fulvio Venturelli
+\R    GiRo SiNToRNiLLoS
+\RJaviRodasG      Jim Weinhart
 \RJo Tomiyori     Joebot
-\R       MiSTerFPGA.co.uk
-\R       Pelayo Marinas
+\R    MiSTerFPGA.co.uk
+\RPelayo Marinas  R. Martinazzo
 \RRetroWilly      SuperCowabunga
 \RSyro Tech       Tony Escobar
-
 
  \B_________ AND __________\W
 ARCADEAGES      Adam Davis
@@ -74,7 +80,9 @@ Ed Balan        Eduardo Javier
 Edward Rana     EmperorStorky
 Gladius         Grumpy Old
 Gus Douboulidis Gwaland
-H. Osterholz    I. ECHEVARRIA
+    Hendrik Osterholz
+    Henrik Nordstrom
+    INAKI ECHEVARRIA
 Ian Court       Ivo
 JPS (RetroFPGA) James Williams
 Jason Nagy      Jeffrey Haas
@@ -82,19 +90,21 @@ Jo le Zef       Joe Tassone
 Joeri van       John Casey
 Jorge Slowfret  Jose Pulgar
 Joseph Hsieh    Juan Francisco
-Juan Ramon      Keith F. Kelly
+Juan Manuel     Juan Ramon
+Keith F. Kelly  Krycek7o2
 Leslie Law      Lionel LENOBLE
-Luis Alvarado   MakeshiftMoney
+Luis Alvarado   M. Ferguson
+M. Fornasini    MakeshiftMoney
 Marcus Hogue    Marcus Sid
 Martin DiPalma  Matthew Young
-Michael Johnson M. Fornasini
-MoonZ           Nima
-Oliver Jaksch   Oliver Wndmth
-Oscar Laguna    Peter Bray
-PsyFX           Renaissance 2K
-RetroPrez       Richard MS
-Rob Jenkins     Robert MacLean
-Robert Mullings Roman Buser
+Michael Johnson MoonZ
+Nima            Oliver Jaksch
+Oliver Wndmth   Oscar Laguna
+Peter Bray      PsyFX
+Renaissance 2K  RetroPrez
+Richard MS      Rob Jenkins
+Robert MacLean  Robert Mullings
+Roman Buser     Shane Lynch
 Steven Wilson   The Collector
 Theodore Huber  Toby Boreham
 Tony Richardson Torren Beitler

@@ -123,6 +123,7 @@ wire [19:0] main_addr;
 wire [ 7:0] main_data, pcm_data;
 wire [ 1:0] ctrl_type;
 wire        main_ok, obj_ok, pcm_ok, pcm_bank;
+wire        flip;
 
 assign fm_cen     = cen24[1];
 assign pcm_cen    = cen24[3];
@@ -131,6 +132,7 @@ assign ba_wr      = 0;
 assign ba0_din    = 0;
 assign ba0_din_m  = 0;
 assign debug_view = debug_bus[0] ? mouse_1p[15:8] : mouse_1p[7:0];
+assign dip_flip   = ~flip;
 
 // The sound uses the 24 MHz clock
 jtframe_frac_cen #( .W( 4), .WC( 4)) u_cen24(
@@ -152,7 +154,7 @@ jtpang_main u_main(
     .cpu_rnw     ( cpu_rnw      ),
     .cpu_dout    ( cpu_dout     ),
 
-    .flip        ( dip_flip     ),
+    .flip        ( flip         ),
     .LVBL        ( LVBL         ),
     .LHBL        ( LHBL         ),
     .dip_pause   ( dip_pause    ),
@@ -255,7 +257,7 @@ jtpang_video u_video(
     .LVBL       ( LVBL          ),
     .HS         ( HS            ),
     .VS         ( VS            ),
-    .flip       ( dip_flip      ),
+    .flip       ( flip          ),
     .video_en   ( video_en      ),
     .char_en    ( char_en       ),
 
