@@ -246,7 +246,8 @@ jtframe_kabuki u_kabuki(
 `ifndef NOMAIN
 jtframe_sysz80_nvram #(
     .RAM_AW     ( 13        ),
-    .CLR_INT    ( 1         )
+    .CLR_INT    ( 1         ),
+    .M1_WAIT    ( 2         )
 ) u_cpu(
     .rst_n      ( ~rst      ),
     .clk        ( clk       ),
