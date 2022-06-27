@@ -38,4 +38,4 @@ modules:
     - name: jt6295
   other:
     - get: [jtopl/hdl/jt2413.yaml]
-    - get: [jteeprom/hdl/jt9346.v]
+    - get: [jteeprom/hdl/jt9346.yaml]

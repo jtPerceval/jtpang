@@ -98,7 +98,7 @@ always @(posedge clk, posedge rst) begin
 end
 
 always @* begin
-    ydiff = (vf+8'd1) - dr_ypos;
+    ydiff = (vf+(flip ? 8'd0: 8'd1)) - dr_ypos;
     match = ydiff < 16;
 end
 
@@ -138,7 +138,7 @@ always @(posedge clk, posedge rst) begin
                     2: dr_ypos <= scan_dout;
                     3: begin
                         dr_xpos[7:0] <= scan_dout;
-                        dr_vsub <= ydiff[3:0] ^ {4{flip}};
+                        dr_vsub <= ydiff[3:0];
                         if( !match || !dr_busy ) begin
                             { scan_done, obj_cnt, sub_cnt } <= { 1'b0, obj_cnt, sub_cnt } + 1'd1;
                             if( match ) begin
@@ -222,7 +222,7 @@ jtframe_dual_ram #(.aw(9)) u_table (
 );
 
 jtframe_obj_buffer #(
-    .FLIP_OFFSET( 9'd383-9'd511 )
+    .FLIP_OFFSET( 9'd8 )
 ) u_line (
     .clk     ( clk          ),
     .LHBL    ( hs           ),

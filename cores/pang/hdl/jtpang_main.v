@@ -85,7 +85,7 @@ module jtpang_main(
 localparam [1:0] BLOCK=2'd1, CWORLD=2'd2;
 
 wire [ 7:0] dec_dout, sys_dout, ram_dout, nvram_dout;
-wire [15:0] A, eeprom_dout;
+wire [15:0] A;
 reg  [ 3:0] bank;
 reg  [ 7:0] cpu_din, cab_dout;
 reg         dial_sel;
@@ -103,8 +103,8 @@ reg         sdo, sclk_l;
 // NVRAM & EEPROM can be dumped to the SD card
 //assign nvram_we  = prog_ram & prog_we & !prog_addr[12];
 //assign eeprom_we = prog_ram & prog_we; // & prog_addr[12];
-assign prog_din  =  // !prog_addr[12] ? nvram_dout :
-                    !prog_addr[ 0] ? eeprom_dout[7:0] : eeprom_dout[15:8];
+// assign prog_din  =  // !prog_addr[12] ? nvram_dout :
+//                     !prog_addr[ 0] ? eeprom_dout[7:0] : eeprom_dout[15:8];
 
 assign sys_dout  = { sdo, 3'b111, video_enq, 1'b1, test, LVBL };
 assign cpu_addr = A[11:0];
@@ -313,21 +313,7 @@ jtframe_sysz80_nvram #(
 `endif
 
 // 128 bytes
-reg  [15:0] dump_din;
-
-always @(posedge clk) begin
-    eeprom_we <= 0;
-    if (prog_we && prog_ram) begin
-        eeprom_we <= 1;
-        if(prog_addr[0]) begin
-            dump_din[15:8] <= prog_data;
-        end else begin
-            dump_din[7:0] <= prog_data;
-        end
-    end
-end
-
-jt9346 #(.DW(16),.AW(6)) u_eeprom(
+jt9346_16b8b #(.DW(16),.AW(6)) u_eeprom(
     .rst        ( rst       ),  // system reset
     .clk        ( clk       ),  // system clock
     // chip interface
@@ -337,10 +323,10 @@ jt9346 #(.DW(16),.AW(6)) u_eeprom(
     .scs        ( scs       ),  // chip select, active high. Goes low in between instructions
     // Dump access
     .dump_clk   ( clk       ),  // same as prom_we module
-    .dump_addr  ( prog_addr[6:1] ),
-    .dump_we    ( eeprom_we     ),
-    .dump_din   ( dump_din      ),
-    .dump_dout  ( eeprom_dout   )
+    .dump_addr  ( prog_addr[6:0] ),
+    .dump_we    ( prog_we && prog_ram ),
+    .dump_din   ( prog_data  ),
+    .dump_dout  ( prog_din   )
 );
 
 endmodule
