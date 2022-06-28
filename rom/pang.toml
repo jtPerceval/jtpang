@@ -45,7 +45,11 @@ data = [
     # GFX encoding
     { machine="marukin",  pointer=14, data="01" },
     # Input type
-    { machine="block",   pointer=15, data="01" },
+    { setname="blockbl",   pointer=15, data="01" },
+    { setname="blockj",   pointer=15, data="01" },
+    { setname="blockr1",   pointer=15, data="01" },
+    { setname="blockr2",   pointer=15, data="01" },
+    { setname="block",   pointer=15, data="03" },
     { machine="qtono1",  pointer=15, data="02" },
     { machine="cworld",  pointer=15, data="02" }
 ]

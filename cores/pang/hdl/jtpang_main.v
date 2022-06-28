@@ -82,7 +82,7 @@ module jtpang_main(
     input               rom_ok
 );
 
-localparam [1:0] BLOCK=2'd1, CWORLD=2'd2;
+localparam [1:0] BLOCK=2'd1, CWORLD=2'd2, BLOCKJOY=2'd3;
 
 wire [ 7:0] dec_dout, sys_dout, ram_dout, nvram_dout;
 wire [15:0] A;
@@ -217,6 +217,9 @@ always @(posedge clk) begin
                         cab_dout[3] <= ~mouse_1p[7];
                     end
                 end
+                BLOCKJOY: begin
+                    cab_dout <= { joystick1[4]&joystick1[5], joystick1[2:0], joystick1[4], joystick1[5], 2'b11 };
+                end
                 default:
                     cab_dout <= { joystick1[3:0], joystick1[4], joystick1[5], 2'b11 };
             endcase
@@ -232,6 +235,9 @@ always @(posedge clk) begin
                         cab_dout[7] <= joystick2[4];
                         cab_dout[3] <= ~mouse_2p[7];
                     end
+                end
+                BLOCKJOY: begin
+                    cab_dout <= { joystick2[4]&joystick2[5], joystick2[2:0], joystick2[4], joystick2[5], 2'b11 };
                 end
                 default:
                     cab_dout <= { joystick2[3:0], joystick2[4], joystick2[5], 2'b11 };
