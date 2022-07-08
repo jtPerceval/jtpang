@@ -43,6 +43,7 @@ module jtpang_video(
     output   [ 7:0] vram_dout,
     output   [ 7:0] attr_dout,
     output   [ 7:0] pal_dout,
+    output   [ 8:0] h,
 
     // DMA
     input           dma_go,
@@ -71,7 +72,7 @@ localparam [8:0] HOFFSET = 9'd12;
 wire [ 7:0] obj_pxl;
 wire [10:0] char_pxl;
 wire [ 7:0] vf;
-wire [ 8:0] dma_addr, v, h, hf;
+wire [ 8:0] dma_addr, v, hf;
 
 assign vf    = v[7:0]^{8{flip}};
 assign hf    = h^{9{flip}};

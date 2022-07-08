@@ -110,6 +110,7 @@ wire [11:0] cpu_addr;
 wire        kabuki_we, kabuki_en;
 wire        char_en, obj_en, video_en, pal_bank;
 wire        dma_go, busak_n, busrq_n;
+wire [ 8:0] h;
 
 // SDRAM
 wire [19:0] char_addr;
@@ -157,6 +158,7 @@ jtpang_main u_main(
     .flip        ( flip         ),
     .LVBL        ( LVBL         ),
     .LHBL        ( LHBL         ),
+    .hcnt        ( h[2:0]       ),
     .dip_pause   ( dip_pause    ),
     .init_n      ( init_n       ),
 
@@ -257,6 +259,7 @@ jtpang_video u_video(
     .LVBL       ( LVBL          ),
     .HS         ( HS            ),
     .VS         ( VS            ),
+    .h          ( h             ),
     .flip       ( flip          ),
     .video_en   ( video_en      ),
     .char_en    ( char_en       ),

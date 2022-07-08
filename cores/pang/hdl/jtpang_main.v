@@ -32,6 +32,7 @@ module jtpang_main(
     output reg          flip,
     input               LVBL,
     input               LHBL,
+    input         [2:0] hcnt,
     input               dip_pause,
     input               init_n,
     output reg          char_en,
@@ -269,6 +270,30 @@ jtframe_kabuki u_kabuki(
     .dout       ( dec_dout    )
 );
 
+wire cen_gated;
+reg  cen_haltn, vram_csl;
+
+assign cen_gated = cpu_cen & cen_haltn;
+
+// This should give roughly the same bus contention as
+// the original circuit when accessing the video memory
+always @(posedge clk, negedge rst) begin
+    if( !rst ) begin
+        cen_haltn <= 1;
+    end else begin
+        vram_csl <= vram_cs;
+        if( !vram_cs )
+            cen_haltn <= 1;
+        else if( vram_cs ) begin
+            if( hcnt[0] &  ~vram_csl ) begin
+                cen_haltn <= 1;
+            end else if( hcnt[2] ) begin
+                cen_haltn <= 1;
+            end
+        end
+    end
+end
+
 `ifndef NOMAIN
 jtframe_sysz80_nvram #(
     .RAM_AW     ( 13        ),
@@ -277,7 +302,7 @@ jtframe_sysz80_nvram #(
 ) u_cpu(
     .rst_n      ( ~rst      ),
     .clk        ( clk       ),
-    .cen        ( cpu_cen   ),
+    .cen        ( cen_gated ),
     .cpu_cen    (           ),
     .int_n      ( int_n | ~dip_pause ),
     .nmi_n      ( 1'b1      ),

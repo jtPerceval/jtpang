@@ -10,7 +10,7 @@
      schematic diagrams.
         Awesome work!
 
-      24th June 2022
+      8th July 2022
 
   Block Block:
   -the main version plays
@@ -24,10 +24,6 @@
 
   - Envelope times in the OPLL
  chip are wrong. Working on it
-  - Bus contention is not
-  implemented yet, so the game
-  may be a bit too fast on busy
-  scenes
   - MiSTer does not support 2
   mice for 2 players on
   Block Block
