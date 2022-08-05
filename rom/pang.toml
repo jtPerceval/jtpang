@@ -2,7 +2,7 @@
 mraauthor=["jotego"]
 
 [features]
-beta = true
+# beta = true
 # debug = true
 
 [parse]
