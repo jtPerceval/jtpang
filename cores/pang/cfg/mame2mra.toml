@@ -15,6 +15,7 @@ skip = { bootlegs=true, setnames = [
 
 [buttons]
 core=$JTFRAME_BUTTONS
+names=[{machine}]
 
 [rbf]
 name="jtpang"
