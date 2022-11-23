@@ -38,42 +38,6 @@ module jtpang_game(
     input   [15:0]  mouse_1p,
     input   [15:0]  mouse_2p,
 
-    // SDRAM interface
-    input           downloading,
-    output          dwnld_busy,
-
-    // Bank 0: allows R/W
-    output   [21:0] ba0_addr,
-    output   [21:0] ba1_addr,
-    output   [21:0] ba2_addr,
-    output   [21:0] ba3_addr,
-    output   [ 3:0] ba_rd,
-    input    [ 3:0] ba_ack,
-    input    [ 3:0] ba_dst,
-    input    [ 3:0] ba_dok,
-    input    [ 3:0] ba_rdy,
-    output   [15:0] ba0_din,
-    output   [ 1:0] ba0_din_m,
-    output          ba_wr,
-
-    input    [15:0] data_read,
-
-    // RAM/ROM LOAD
-    input   [24:0]  ioctl_addr,
-    input   [ 7:0]  ioctl_dout,
-    output  [ 7:0]  ioctl_din,
-    input           ioctl_wr,
-    input           ioctl_ram,
-    output  [21:0]  prog_addr,
-    output  [15:0]  prog_data,
-    output  [ 1:0]  prog_mask,
-    output  [ 1:0]  prog_ba,
-    output          prog_we,
-    output          prog_rd,
-    input           prog_ack,
-    input           prog_dok,
-    input           prog_dst,
-    input           prog_rdy,
     // DIP switches
     input   [31:0]  status,
     input   [31:0]  dipsw,
@@ -91,7 +55,9 @@ module jtpang_game(
     // Debug
     input   [3:0]   gfx_en,
     input   [7:0]   debug_bus,
-    output  [7:0]   debug_view
+    output  [7:0]   debug_view,
+    // Ports
+    `include "mem_ports.inc"
 );
 
 // clock enable signals
@@ -113,17 +79,9 @@ wire        dma_go, busak_n, busrq_n;
 wire [ 8:0] h;
 
 // SDRAM
-wire [19:0] char_addr;
-wire [31:0] char_data;
-wire [16:0] obj_addr;
-wire [31:0] obj_data;
-wire        main_cs, char_cs, obj_cs,
-            init_n;
-wire [17:0] pcm_addr;
-wire [19:0] main_addr;
-wire [ 7:0] main_data, pcm_data;
+wire        init_n;
 wire [ 1:0] ctrl_type;
-wire        main_ok, obj_ok, pcm_ok, pcm_bank;
+wire        pcm_bank;
 wire        flip;
 
 assign fm_cen     = cen24[1];
@@ -188,7 +146,7 @@ jtpang_main u_main(
 
     .joystick1   ( joystick1    ),
     .joystick2   ( joystick2    ),
-    .start_button(start_button  ),
+    .start_button( start_button ),
     .coin        ( coin_input[0]),
     .service     ( service      ),
     .test        ( dip_test     ),
@@ -293,65 +251,6 @@ jtpang_video u_video(
     .green      ( green         ),
     .blue       ( blue          ),
     .gfx_en     ( gfx_en        )
-);
-/* verilator tracing_off */
-jtpang_sdram u_sdram(
-    .rst        ( rst           ),
-    .clk        ( clk           ),
-    .LVBL       ( LVBL          ),
-    .init_n     ( init_n        ),
-    .ctrl_type  ( ctrl_type     ),
-
-    .main_cs    ( main_cs       ),
-    .main_addr  ( main_addr     ),
-    .main_data  ( main_data     ),
-    .main_ok    ( main_ok       ),
-
-    .pcm_addr   ( pcm_addr      ),
-    .pcm_cs     ( 1'b1          ),
-    .pcm_data   ( pcm_data      ),
-    .pcm_ok     ( pcm_ok        ),
-
-    .char_cs    ( char_cs       ),
-    .char_ok    (               ),
-    .char_addr  ( char_addr     ),
-    .char_data  ( char_data     ),
-
-    .obj_ok     ( obj_ok        ),
-    .obj_cs     ( obj_cs        ),
-    .obj_addr   ( obj_addr      ),
-    .obj_data   ( obj_data      ),
-
-    .ba0_addr   ( ba0_addr      ),
-    .ba1_addr   ( ba1_addr      ),
-    .ba2_addr   ( ba2_addr      ),
-    .ba3_addr   ( ba3_addr      ),
-    .ba_rd      ( ba_rd         ),
-    .ba_ack     ( ba_ack        ),
-    .ba_dst     ( ba_dst        ),
-    .ba_dok     ( ba_dok        ),
-    .ba_rdy     ( ba_rdy        ),
-    .data_read  ( data_read     ),
-
-    .downloading( downloading   ),
-    .dwnld_busy ( dwnld_busy    ),
-
-    .kabuki_we  ( kabuki_we     ),
-    .kabuki_en  ( kabuki_en     ),
-
-    .ioctl_addr ( ioctl_addr    ),
-    .ioctl_dout ( ioctl_dout    ),
-    .ioctl_wr   ( ioctl_wr      ),
-    .ioctl_ram  ( ioctl_ram     ),
-
-    .prog_addr  ( prog_addr     ),
-    .prog_data  ( prog_data     ),
-    .prog_mask  ( prog_mask     ),
-    .prog_ba    ( prog_ba       ),
-    .prog_we    ( prog_we       ),
-    .prog_rd    ( prog_rd       ),
-    .prog_ack   ( prog_ack      ),
-    .prog_rdy   ( prog_rdy      )
 );
 
 endmodule

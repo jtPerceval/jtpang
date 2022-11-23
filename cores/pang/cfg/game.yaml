@@ -2,6 +2,7 @@ game:
   - from: pang
     get:
       - jtpang_game.v
+      - jtpang_game_sdram.v
       - jtpang_main.v
       - jtpang_video.v
       - jtpang_colmix.v

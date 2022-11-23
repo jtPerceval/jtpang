@@ -1,0 +1,26 @@
+sdram:
+  banks:
+    -
+      buses:
+        -
+          name: main
+          addr_width: 20
+          data_width: 8
+    -
+      buses:
+        -
+          name: pcm
+          addr_width: 18 #19
+          data_width:  8  
+    -
+      buses:    
+        -
+          name: char
+          addr_width: 22 #22
+          data_width: 32 
+    -
+      buses:    
+        -
+          name: obj
+          addr_width: 19 #19
+          data_width: 32
